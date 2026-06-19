@@ -1,65 +1,75 @@
 package org.example.dyds_proyecto2_ramones
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import org.example.dyds_proyecto2_ramones.presentation.biblioteca.BibliotecaScreen
 import org.example.dyds_proyecto2_ramones.presentation.busqueda.BusquedaScreen
-import org.example.dyds_proyecto2_ramones.presentation.common.Routes
+import org.example.dyds_proyecto2_ramones.presentation.common.NavigationRail
+import org.example.dyds_proyecto2_ramones.presentation.common.Screen
 import org.example.dyds_proyecto2_ramones.presentation.detalle.DetalleScreen
 import org.example.dyds_proyecto2_ramones.presentation.favoritos.FavoritosScreen
-
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        val navController = rememberNavController()
+        val bgBase = Color(0xFF0E1117)
 
-        NavHost(
-            navController = navController,
-            startDestination = Routes.BUSQUEDA,
+        var currentScreen by remember { mutableStateOf<Screen>(Screen.Busqueda) }
+        var railExpanded by remember { mutableStateOf(false) }
+
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(bgBase),
         ) {
-            composable(route = Routes.BUSQUEDA) {
-                BusquedaScreen(
-                    onNavigateBiblioteca = { steamId -> navController.navigate(Routes.biblioteca(steamId)) },
-                    onNavigateFavoritos = { navController.navigate(Routes.FAVORITOS) },
-                )
-            }
+            NavigationRail(
+                expanded = railExpanded,
+                onToggle = { railExpanded = !railExpanded },
+                currentScreen = currentScreen,
+                onNavigate = { currentScreen = it },
+            )
 
-            composable(
-                route = Routes.BIBLIOTECA,
-                arguments = listOf(navArgument(Routes.STEAM_ID_ARG) { type = NavType.StringType }),
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(bgBase),
             ) {
-                BibliotecaScreen(
-                    steamId = "{${Routes.STEAM_ID_ARG}}",
-                    onNavigateDetalle = { appId -> navController.navigate(Routes.detalle(appId)) },
-                    onNavigateFavoritos = { navController.navigate(Routes.FAVORITOS) },
-                    onNavigateBack = { navController.popBackStack() },
-                )
-            }
+                when (currentScreen) {
+                    is Screen.Busqueda -> BusquedaScreen(
+                        onNavigateBiblioteca = { currentScreen = Screen.Biblioteca },
+                        onNavigateFavoritos = { currentScreen = Screen.Favoritos },
+                    )
 
-            composable(
-                route = Routes.DETALLE,
-                arguments = listOf(navArgument(Routes.APP_ID_ARG) { type = NavType.StringType }),
-            ) {
-                DetalleScreen(
-                    appId = "{${Routes.APP_ID_ARG}}",
-                    onNavigateFavoritos = { navController.navigate(Routes.FAVORITOS) },
-                    onNavigateBack = { navController.popBackStack() },
-                )
-            }
+                    is Screen.Biblioteca -> BibliotecaScreen(
+                        steamId = "76561198000000000",
+                        onNavigateDetalle = { appId -> currentScreen = Screen.Detalle(appId) },
+                        onNavigateFavoritos = { currentScreen = Screen.Favoritos },
+                        onNavigateBack = { currentScreen = Screen.Busqueda },
+                    )
 
-            composable(route = Routes.FAVORITOS) {
-                FavoritosScreen(
-                    onNavigateDetalle = { appId -> navController.navigate(Routes.detalle(appId)) },
-                    onNavigateBack = { navController.popBackStack() },
-                )
+                    is Screen.Detalle -> DetalleScreen(
+                        appId = (currentScreen as Screen.Detalle).appId,
+                        onNavigateFavoritos = { currentScreen = Screen.Favoritos },
+                        onNavigateBack = { currentScreen = Screen.Biblioteca },
+                    )
+
+                    is Screen.Favoritos -> FavoritosScreen(
+                        onNavigateDetalle = { appId -> currentScreen = Screen.Detalle(appId) },
+                        onNavigateBack = { currentScreen = Screen.Busqueda },
+                    )
+                }
             }
         }
     }
