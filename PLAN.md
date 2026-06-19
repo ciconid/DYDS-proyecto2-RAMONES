@@ -99,81 +99,81 @@ org.example.dyds_proyecto2_ramones/
 
 ---
 
-### Etapa 2b — `GetPerfilUseCase` `[Persona A]`
+### ✅ Etapa 2b — `GetPerfilUseCase` `[Persona A]`
 **Objetivo:** obtener el perfil de un usuario por SteamID.
 
-- [ ] `[A]` Implementar `GetPerfilUseCase`
-- [ ] `[A]` `GetPerfilUseCaseTest` — happy path, SteamID inválido, error de repositorio
+- ✅ `[A]` Implementar `GetPerfilUseCase`
+- ✅ `[A]` `GetPerfilUseCaseTest` — happy path, SteamID inválido, error de repositorio
 
 **Criterio de éxito:** `./gradlew test` pasa para este use case.
 
 ---
 
-### Etapa 2c — `GetBibliotecaUseCase` `[Persona A]`
+### ✅ Etapa 2c — `GetBibliotecaUseCase` `[Persona A]`
 **Objetivo:** obtener la lista de juegos de la biblioteca de un usuario.
 
-- [ ] `[A]` Implementar `GetBibliotecaUseCase`
-- [ ] `[A]` `GetBibliotecaUseCaseTest` — happy path, biblioteca vacía, error de repositorio
+- ✅ `[A]` Implementar `GetBibliotecaUseCase`
+- ✅ `[A]` `GetBibliotecaUseCaseTest` — happy path, biblioteca vacía, error de repositorio
 
 **Criterio de éxito:** `./gradlew test` pasa para este use case.
 
 ---
 
-### Etapa 2d — `FiltrarPorGeneroUseCase` `[Persona A]`
+### ✅ Etapa 2d — `FiltrarPorGeneroUseCase` `[Persona A]`
 **Objetivo:** filtrar en memoria una lista de juegos por género, sin I/O.
 
-- [ ] `[A]` Implementar `FiltrarPorGeneroUseCase`
-- [ ] `[A]` `FiltrarPorGeneroUseCaseTest` — género existente, género sin resultados, lista vacía
+- ✅ `[A]` Implementar `FiltrarPorGeneroUseCase`
+- ✅ `[A]` `FiltrarPorGeneroUseCaseTest` — género existente, género sin resultados, lista vacía
 
 **Criterio de éxito:** `./gradlew test` pasa para este use case.
 
 ---
 
-### Etapa 2e — `OrdenarPorHorasUseCase` `[Persona A]`
+### ✅ Etapa 2e — `OrdenarPorHorasUseCase` `[Persona A]`
 **Objetivo:** ordenar en memoria una lista de juegos por horas jugadas, sin I/O.
 
-- [ ] `[A]` Implementar `OrdenarPorHorasUseCase`
-- [ ] `[A]` `OrdenarPorHorasUseCaseTest` — orden descendente, juegos con mismas horas, lista vacía
+- ✅ `[A]` Implementar `OrdenarPorHorasUseCase`
+- ✅ `[A]` `OrdenarPorHorasUseCaseTest` — orden descendente, juegos con mismas horas, lista vacía
 
 **Criterio de éxito:** `./gradlew test` pasa para este use case.
 
 ---
 
-### Etapa 2f — `GetDetalleUseCase` `[Persona A]`
+### ✅ Etapa 2f — `GetDetalleUseCase` `[Persona A]`
 **Objetivo:** obtener el detalle completo de un juego combinando datos de Steam y RAWG.
 
-- [ ] `[A]` Implementar `GetDetalleUseCase`
-- [ ] `[A]` `GetDetalleUseCaseTest` — happy path, juego sin datos de RAWG, error de repositorio
+- ✅ `[A]` Implementar `GetDetalleUseCase`
+- ✅ `[A]` `GetDetalleUseCaseTest` — happy path, juego sin datos de RAWG, error de repositorio
 
 **Criterio de éxito:** `./gradlew test` pasa para este use case.
 
 ---
 
-### Etapa 2g — `GetFavoritosUseCase` `[Persona A]`
+### ✅ Etapa 2g — `GetFavoritosUseCase` `[Persona A]`
 **Objetivo:** obtener el listado de juegos marcados como favoritos.
 
-- [ ] `[A]` Implementar `GetFavoritosUseCase`
-- [ ] `[A]` `GetFavoritosUseCaseTest` — lista con items, lista vacía
+- ✅ `[A]` Implementar `GetFavoritosUseCase`
+- ✅ `[A]` `GetFavoritosUseCaseTest` — lista con items, lista vacía
 
 **Criterio de éxito:** `./gradlew test` pasa para este use case.
 
 ---
 
-### Etapa 2h — `AgregarFavoritoUseCase` `[Persona A]`
+### ✅ Etapa 2h — `AgregarFavoritoUseCase` `[Persona A]`
 **Objetivo:** agregar un juego a la lista de favoritos.
 
-- [ ] `[A]` Implementar `AgregarFavoritoUseCase`
-- [ ] `[A]` `AgregarFavoritoUseCaseTest` — agregar juego nuevo, agregar juego duplicado
+- ✅ `[A]` Implementar `AgregarFavoritoUseCase`
+- ✅ `[A]` `AgregarFavoritoUseCaseTest` — agregar juego nuevo, agregar juego duplicado
 
 **Criterio de éxito:** `./gradlew test` pasa para este use case.
 
 ---
 
-### Etapa 2i — `EliminarFavoritoUseCase` `[Persona A]`
+### ✅ Etapa 2i — `EliminarFavoritoUseCase` `[Persona A]`
 **Objetivo:** eliminar un juego de la lista de favoritos por appId.
 
-- [ ] `[A]` Implementar `EliminarFavoritoUseCase`
-- [ ] `[A]` `EliminarFavoritoUseCaseTest` — eliminar favorito existente, eliminar appId inexistente
+- ✅ `[A]` Implementar `EliminarFavoritoUseCase`
+- ✅ `[A]` `EliminarFavoritoUseCaseTest` — eliminar favorito existente, eliminar appId inexistente
 
 **Criterio de éxito:** `./gradlew test` pasa para este use case.
 
