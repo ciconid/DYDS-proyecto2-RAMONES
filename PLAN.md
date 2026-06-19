@@ -65,13 +65,13 @@ org.example.dyds_proyecto2_ramones/
 
 ---
 
-### Etapa 1 — Setup del proyecto `[Persona A]`
+### ✅ Etapa 1 — Setup del proyecto `[Persona A]`
 **Objetivo:** tener el proyecto desktop compilando con dependencias configuradas y navegación funcional.
 
 **Tareas:**
-- [ ] `[A]` Agregar dependencias mínimas en `build.gradle`: Compose Multiplatform, navegación, Coroutines
-- [ ] `[A]` Configurar navegación con las 4 rutas: `busqueda`, `biblioteca/{steamId}`, `detalle/{appId}`, `favoritos`
-- [ ] `[A]` Agregar pantallas placeholder (Composables vacíos) para que la navegación compile
+-  ✅ `[A]` Agregar dependencias mínimas en `build.gradle`: Compose Multiplatform, navegación, Coroutines
+- ✅ `[A]` Configurar navegación con las 4 rutas: `busqueda`, `biblioteca/{steamId}`, `detalle/{appId}`, `favoritos`
+- ✅ `[A]` Agregar pantallas placeholder (Composables vacíos) para que la navegación compile
 
 **Criterio de éxito:** el proyecto compila, inicia en la pantalla de búsqueda vacía y la navegación entre pantallas funciona sin contenido real.
 
