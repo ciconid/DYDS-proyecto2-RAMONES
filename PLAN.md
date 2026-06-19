@@ -177,15 +177,13 @@ org.example.dyds_proyecto2_ramones/
 
 **Criterio de éxito:** `./gradlew test` pasa para este use case.
 
-### Etapa 3 — Capa Data: APIs remotas `[Persona B]`
-**Objetivo:** conectarse a Steam y RAWG, mapear respuestas a modelos del dominio y testear.
-
-> Puede desarrollarse en paralelo con la Etapa 4 una vez que la Etapa 2 esté completa.
+### Etapa 3a — Steam API `[Persona B]`
+**Objetivo:** conectarse a la API de Steam y mapear respuestas a modelos del dominio.
 
 **Dependencias:**
 - [ ] `[B]` Agregar Retrofit + OkHttp + Gson + Turbine
 
-**Steam (`data/remote/steam/`):**
+**Implementación (`data/remote/steam/`):**
 - [ ] `[B]` `SteamApiService` con Retrofit — endpoints:
   - `GetPlayerSummaries` → perfil del usuario
   - `GetOwnedGames` → biblioteca con horas jugadas
@@ -193,7 +191,24 @@ org.example.dyds_proyecto2_ramones/
 - [ ] `[B]` DTOs de respuesta (`SteamPerfilDto`, `SteamJuegoDto`, `SteamLogroDto`)
 - [ ] `[B]` `SteamRemoteDataSource` — convierte DTOs a modelos de dominio
 
-**RAWG (`data/remote/rawg/`):**
+**Repositorios (`data/repository/`):**
+- [ ] `[B]` `PerfilRepositoryImpl`
+- [ ] `[B]` `BibliotecaRepositoryImpl`
+
+**Tests:**
+- [ ] `[B]` `PerfilRepositoryImplTest` — respuesta exitosa, error HTTP, timeout
+- [ ] `[B]` `BibliotecaRepositoryImplTest` — lista completa, lista vacía, error HTTP
+
+**Criterio de éxito:** `./gradlew test` pasa. Test manual con SteamID real loguea el perfil y la biblioteca.
+
+---
+
+### Etapa 3b — RAWG API `[Persona B]`
+**Objetivo:** conectarse a la API de RAWG y mapear respuestas a modelos del dominio.
+
+> Puede desarrollarse en paralelo con la Etapa 3a.
+
+**Implementación (`data/remote/rawg/`):**
 - [ ] `[B]` `RawgApiService` con Retrofit — endpoints:
   - `/games?search={nombre}` → búsqueda por nombre
   - `/games/{id}` → detalle con Metacritic, géneros, descripción
@@ -201,24 +216,39 @@ org.example.dyds_proyecto2_ramones/
 - [ ] `[B]` DTOs de respuesta (`RawgJuegoDto`, `RawgDetalleDto`)
 - [ ] `[B]` `RawgRemoteDataSource` — convierte DTOs a modelos de dominio
 
-**Broker y repositorios (`data/repository/`):**
-- [ ] `[B]` `GameBroker` — combina Steam y RAWG para construir `DetalleJuego`
-- [ ] `[B]` `PerfilRepositoryImpl`
-- [ ] `[B]` `BibliotecaRepositoryImpl`
-- [ ] `[B]` `DetalleRepositoryImpl` — delega en `GameBroker`
-
-**DI (`di/NetworkModule`):**
-- [ ] `[B]` Proveer instancias de Retrofit para Steam y RAWG (base URLs distintas)
-- [ ] `[B]` Bindings de interfaces a implementaciones
-
 **Tests:**
-- [ ] `[B]` `PerfilRepositoryImplTest` — respuesta exitosa, error HTTP, timeout
-- [ ] `[B]` `BibliotecaRepositoryImplTest`
-- [ ] `[B]` `GameBrokerTest` — RAWG encuentra el juego, RAWG no lo encuentra (fallback parcial), error en logros de Steam
+- [ ] `[B]` `RawgRemoteDataSourceTest` — juego encontrado, juego no encontrado, error HTTP
 
-**Criterio de éxito:** test de integración manual con un SteamID real loguea la lista de juegos. `./gradlew test` pasa.
+**Criterio de éxito:** `./gradlew test` pasa. Test manual con nombre de juego real loguea el detalle.
 
 ---
+
+### Etapa 3c — GameBroker `[Persona B]`
+**Objetivo:** combinar datos de Steam y RAWG para construir `DetalleJuego`.
+
+> Depende de 3a y 3b.
+
+**Implementación (`data/repository/`):**
+- [ ] `[B]` `GameBroker` — busca el juego en RAWG por nombre, combina con logros de Steam, devuelve `DetalleJuego`
+- [ ] `[B]` `DetalleRepositoryImpl` — delega en `GameBroker`
+
+**Tests:**
+- [ ] `[B]` `GameBrokerTest` — RAWG encuentra el juego, RAWG no lo encuentra (fallback parcial), error en logros de Steam
+
+**Criterio de éxito:** `./gradlew test` pasa. Test manual con appId real devuelve un `DetalleJuego` completo.
+
+---
+
+### Etapa 3d — NetworkModule (Koin) `[Persona B]`
+**Objetivo:** proveer las instancias de red vía inyección de dependencias.
+
+> Depende de 3a y 3b.
+
+**Implementación (`di/`):**
+- [ ] `[B]` `NetworkModule` — instancias de Retrofit para Steam y RAWG con base URLs distintas
+- [ ] `[B]` Bindings de interfaces a implementaciones (`PerfilRepository`, `BibliotecaRepository`, `DetalleRepository`)
+
+**Criterio de éxito:** la app compila con Koin inicializado y los repositorios inyectables desde la Etapa 5.
 
 ### Etapa 4 — Capa Data: persistencia local `[Persona C]`
 **Objetivo:** implementar favoritos con almacenamiento local y testear.
