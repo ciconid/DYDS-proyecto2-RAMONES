@@ -18,10 +18,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -30,12 +29,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import org.example.dyds_proyecto2_ramones.domain.model.Juego
+import org.example.dyds_proyecto2_ramones.domain.usecase.GetFavoritosUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
 
 @Composable
 fun FavoritosScreen(
     onNavigateDetalle: (String) -> Unit,
     onNavigateBack: () -> Unit,
+    getFavoritosUseCase: GetFavoritosUseCase,
+    eliminarFavoritoUseCase: EliminarFavoritoUseCase,
 ) {
     val bgBase = Color(0xFF0E1117)
     val bgSurface = Color(0xFF161B27)
@@ -44,14 +48,8 @@ fun FavoritosScreen(
     val textMuted = Color(0xFF7A8599)
     val border = Color(0xFF242D42)
 
-    var favoritos by remember {
-        mutableStateOf(
-            listOf(
-                Juego("570", "Dota 2", 124.5, "", listOf("Estrategia")),
-                Juego("39210", "Final Fantasy XIV", 203.2, "", listOf("RPG")),
-            )
-        )
-    }
+    val favoritos by getFavoritosUseCase().collectAsState(initial = emptyList())
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -82,7 +80,7 @@ fun FavoritosScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     Text(
-                        text = "💔✕",
+                        text = "✕",
                         fontSize = 40.sp,
                         modifier = Modifier.alpha(0.4f),
                         textAlign = TextAlign.Center,
@@ -122,7 +120,7 @@ fun FavoritosScreen(
                                 .background(elevated, RoundedCornerShape(6.dp)),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("🎮")
+                            Text("")
                         }
 
                         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -141,7 +139,9 @@ fun FavoritosScreen(
 
                         Button(
                             onClick = {
-                                favoritos = favoritos.filter { it.appId != juego.appId }
+                                scope.launch {
+                                    eliminarFavoritoUseCase.invoke(juego.appId)
+                                }
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Transparent,

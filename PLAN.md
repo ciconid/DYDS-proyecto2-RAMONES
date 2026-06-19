@@ -250,27 +250,27 @@ org.example.dyds_proyecto2_ramones/
 
 **Criterio de éxito:** la app compila con Koin inicializado y los repositorios inyectables desde la Etapa 5.
 
-### Etapa 4 — Capa Data: persistencia local `[Persona C]`
+### ✅ Etapa 4 — Capa Data: persistencia local `[Persona C]`
 **Objetivo:** implementar favoritos con almacenamiento local y testear.
 
 > Puede desarrollarse en paralelo con la Etapa 3 una vez que la Etapa 2 esté completa.
 
 **Dependencias:**
-- [ ] `[C]` Agregar SQLDelight + Koin
+- ✅ `[C]` Agregar SQLDelight + Koin
 
 **Implementación:**
-- [ ] `[C]` `FavoritoEntity` — campos: `appId`, `nombre`, `iconUrl`, `horasJugadas`
-- [ ] `[C]` `FavoritoDao` / queries equivalentes
-- [ ] `[C]` `AppDatabase` o driver SQLite equivalente
-- [ ] `[C]` `FavoritosLocalDataSource` — expone `Flow<List<Juego>>`
-- [ ] `[C]` `FavoritosRepositoryImpl`
-- [ ] `[C]` `DatabaseModule` (Koin)
+- ✅ `[C]` `FavoritoEntity` — campos: `appId`, `nombre`, `iconUrl`, `horasJugadas`
+- ✅ `[C]` `FavoritoDao` / queries equivalentes (SQLDelight `Favoritos.sq`)
+- ✅ `[C]` `AppDatabase` o driver SQLite equivalente
+- ✅ `[C]` `FavoritosLocalDataSource` — expone `Flow<List<Juego>>`
+- ✅ `[C]` `FavoritosRepositoryImpl`
+- ✅ `[C]` `DatabaseModule` (Koin)
 
 **Tests:**
-- [ ] `[C]` `FavoritosLocalDataSourceTest` — insertar, recuperar, eliminar, duplicados (DB en memoria)
-- [ ] `[C]` `FavoritosRepositoryImplTest`
+- ✅ `[C]` `FavoritosLocalDataSourceTest` — insertar, recuperar, eliminar, duplicados (DB en memoria)
+- ✅ `[C]` `FavoritosRepositoryImplTest`
 
-**Criterio de éxito:** test inserta y recupera un favorito sin red. `./gradlew test` pasa.
+**Criterio de éxito:** test inserta y recupera un favorito sin red. `./gradlew :shared:jvmTest` pasa.
 
 ---
 

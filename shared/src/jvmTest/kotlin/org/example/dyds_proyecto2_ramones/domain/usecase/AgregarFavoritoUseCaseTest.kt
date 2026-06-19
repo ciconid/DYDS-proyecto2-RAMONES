@@ -28,9 +28,7 @@ class AgregarFavoritoUseCaseTest {
         val juego = Juego("570", "Dota 2", 120.0, "", listOf("MOBA"))
         coEvery { favoritosRepository.agregar(juego) } returns Unit
 
-        // Primera vez
         agregarFavoritoUseCase(juego)
-        // Segunda vez (duplicado)
         agregarFavoritoUseCase(juego)
 
         coVerify(exactly = 2) { favoritosRepository.agregar(juego) }

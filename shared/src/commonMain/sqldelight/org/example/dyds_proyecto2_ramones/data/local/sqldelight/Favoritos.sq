@@ -1,0 +1,16 @@
+CREATE TABLE favorito (
+  appId TEXT NOT NULL PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  iconUrl TEXT,
+  horasJugadas REAL
+);
+
+insertFavorito:
+INSERT OR REPLACE INTO favorito(appId, nombre, iconUrl, horasJugadas)
+VALUES(?, ?, ?, ?);
+
+deleteFavorito:
+DELETE FROM favorito WHERE appId = ?;
+
+selectAllFavoritos:
+SELECT appId, nombre, iconUrl, horasJugadas FROM favorito ORDER BY nombre;

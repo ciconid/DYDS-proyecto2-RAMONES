@@ -13,12 +13,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import org.koin.java.KoinJavaComponent.inject
 import org.example.dyds_proyecto2_ramones.presentation.biblioteca.BibliotecaScreen
 import org.example.dyds_proyecto2_ramones.presentation.busqueda.BusquedaScreen
 import org.example.dyds_proyecto2_ramones.presentation.common.NavigationRail
 import org.example.dyds_proyecto2_ramones.presentation.common.Screen
 import org.example.dyds_proyecto2_ramones.presentation.detalle.DetalleScreen
 import org.example.dyds_proyecto2_ramones.presentation.favoritos.FavoritosScreen
+import org.example.dyds_proyecto2_ramones.domain.usecase.GetFavoritosUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.AgregarFavoritoUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
 
 @Composable
 @Preview
@@ -28,6 +32,10 @@ fun App() {
 
         var currentScreen by remember { mutableStateOf<Screen>(Screen.Busqueda) }
         var railExpanded by remember { mutableStateOf(false) }
+
+        val getFavoritosUseCase: GetFavoritosUseCase by inject(GetFavoritosUseCase::class.java)
+        val agregarFavoritoUseCase: AgregarFavoritoUseCase by inject(AgregarFavoritoUseCase::class.java)
+        val eliminarFavoritoUseCase: EliminarFavoritoUseCase by inject(EliminarFavoritoUseCase::class.java)
 
         Row(
             modifier = Modifier
@@ -63,11 +71,15 @@ fun App() {
                         appId = (currentScreen as Screen.Detalle).appId,
                         onNavigateFavoritos = { currentScreen = Screen.Favoritos },
                         onNavigateBack = { currentScreen = Screen.Biblioteca },
+                        agregarFavoritoUseCase = agregarFavoritoUseCase,
+                        eliminarFavoritoUseCase = eliminarFavoritoUseCase,
                     )
 
                     is Screen.Favoritos -> FavoritosScreen(
                         onNavigateDetalle = { appId -> currentScreen = Screen.Detalle(appId) },
                         onNavigateBack = { currentScreen = Screen.Busqueda },
+                        getFavoritosUseCase = getFavoritosUseCase,
+                        eliminarFavoritoUseCase = eliminarFavoritoUseCase,
                     )
                 }
             }

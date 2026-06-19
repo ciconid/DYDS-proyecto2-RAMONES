@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,12 +33,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Canvas
 import androidx.compose.ui.geometry.Offset
+import kotlinx.coroutines.launch
+import org.example.dyds_proyecto2_ramones.domain.model.Juego
+import org.example.dyds_proyecto2_ramones.domain.usecase.AgregarFavoritoUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
 
 @Composable
 fun DetalleScreen(
     appId: String,
     onNavigateFavoritos: () -> Unit,
     onNavigateBack: () -> Unit,
+    agregarFavoritoUseCase: AgregarFavoritoUseCase,
+    eliminarFavoritoUseCase: EliminarFavoritoUseCase,
 ) {
     val bgBase = Color(0xFF0E1117)
     val bgSurface = Color(0xFF161B27)
@@ -61,6 +68,7 @@ fun DetalleScreen(
     )
 
     var favoritoActivo by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -81,7 +89,7 @@ fun DetalleScreen(
                     .background(elevated, RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("🎮")
+                Text("")
             }
 
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -102,7 +110,15 @@ fun DetalleScreen(
                     Button(
                         onClick = {
                             favoritoActivo = !favoritoActivo
-                            onNavigateFavoritos()
+                            scope.launch {
+                                val juego = Juego(appId, gameName, 310.0, "", genres)
+                                if (favoritoActivo) {
+                                    agregarFavoritoUseCase.invoke(juego)
+                                } else {
+                                    eliminarFavoritoUseCase.invoke(appId)
+                                }
+                                onNavigateFavoritos()
+                            }
                         },
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -196,7 +212,7 @@ fun DetalleScreen(
                                 .background(elevated, RoundedCornerShape(4.dp)),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("🏆", fontSize = 12.sp)
+                            Text("", fontSize = 12.sp)
                         }
 
                         Column(modifier = Modifier.weight(1f)) {
