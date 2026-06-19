@@ -8,7 +8,6 @@ plugins {
 kotlin {
     jvm()
 
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -41,9 +40,16 @@ kotlin {
                 implementation("com.squareup.sqldelight:sqlite-driver:1.5.5")
             }
         }
+
         val jvmMain by getting {
             dependencies {
                 implementation("com.squareup.sqldelight:sqlite-driver:1.5.5")
+                implementation("com.squareup.retrofit2:retrofit:2.9.0")
+                implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+                implementation("com.squareup.okhttp3:okhttp:4.11.0")
+                implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+                implementation("com.google.code.gson:gson:2.10.1")
+                implementation("io.insert-koin:koin-core:3.4.0")
             }
         }
     }
@@ -55,4 +61,3 @@ sqldelight {
         sourceFolders = listOf("sqldelight")
     }
 }
-

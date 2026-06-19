@@ -181,23 +181,23 @@ org.example.dyds_proyecto2_ramones/
 **Objetivo:** conectarse a la API de Steam y mapear respuestas a modelos del dominio.
 
 **Dependencias:**
-- [ ] `[B]` Agregar Retrofit + OkHttp + Gson + Turbine
+- ✅ `[B]` Agregar Retrofit + OkHttp + Gson + Turbine
 
 **Implementación (`data/remote/steam/`):**
-- [ ] `[B]` `SteamApiService` con Retrofit — endpoints:
+- ✅ `[B]` `SteamApiService` con Retrofit — endpoints:
   - `GetPlayerSummaries` → perfil del usuario
   - `GetOwnedGames` → biblioteca con horas jugadas
   - `GetPlayerAchievements` → logros por juego
-- [ ] `[B]` DTOs de respuesta (`SteamPerfilDto`, `SteamJuegoDto`, `SteamLogroDto`)
-- [ ] `[B]` `SteamRemoteDataSource` — convierte DTOs a modelos de dominio
+- ✅ `[B]` DTOs de respuesta (`SteamPerfilDto`, `SteamJuegoDto`, `SteamLogroDto`)
+- ✅ `[B]` `SteamRemoteDataSource` — convierte DTOs a modelos de dominio
 
 **Repositorios (`data/repository/`):**
-- [ ] `[B]` `PerfilRepositoryImpl`
-- [ ] `[B]` `BibliotecaRepositoryImpl`
+- ✅ `[B]` `PerfilRepositoryImpl`
+- ✅ `[B]` `BibliotecaRepositoryImpl`
 
 **Tests:**
-- [ ] `[B]` `PerfilRepositoryImplTest` — respuesta exitosa, error HTTP, timeout
-- [ ] `[B]` `BibliotecaRepositoryImplTest` — lista completa, lista vacía, error HTTP
+- ✅ `[B]` `PerfilRepositoryImplTest` — respuesta exitosa, error HTTP, timeout
+- ✅ `[B]` `BibliotecaRepositoryImplTest` — lista completa, lista vacía, error HTTP
 
 **Criterio de éxito:** `./gradlew test` pasa. Test manual con SteamID real loguea el perfil y la biblioteca.
 
@@ -209,15 +209,15 @@ org.example.dyds_proyecto2_ramones/
 > Puede desarrollarse en paralelo con la Etapa 3a.
 
 **Implementación (`data/remote/rawg/`):**
-- [ ] `[B]` `RawgApiService` con Retrofit — endpoints:
+- ✅ `[B]` `RawgApiService` con Retrofit — endpoints:
   - `/games?search={nombre}` → búsqueda por nombre
   - `/games/{id}` → detalle con Metacritic, géneros, descripción
   - `/games/{id}/screenshots` → imágenes
-- [ ] `[B]` DTOs de respuesta (`RawgJuegoDto`, `RawgDetalleDto`)
-- [ ] `[B]` `RawgRemoteDataSource` — convierte DTOs a modelos de dominio
+- ✅ `[B]` DTOs de respuesta (`RawgJuegoDto`, `RawgDetalleDto`)
+- ✅ `[B]` `RawgRemoteDataSource` — convierte DTOs a modelos de dominio
 
 **Tests:**
-- [ ] `[B]` `RawgRemoteDataSourceTest` — juego encontrado, juego no encontrado, error HTTP
+- ✅ `[B]` `RawgRemoteDataSourceTest` — juego encontrado, juego no encontrado, error HTTP
 
 **Criterio de éxito:** `./gradlew test` pasa. Test manual con nombre de juego real loguea el detalle.
 
@@ -229,11 +229,11 @@ org.example.dyds_proyecto2_ramones/
 > Depende de 3a y 3b.
 
 **Implementación (`data/repository/`):**
-- [ ] `[B]` `GameBroker` — busca el juego en RAWG por nombre, combina con logros de Steam, devuelve `DetalleJuego`
-- [ ] `[B]` `DetalleRepositoryImpl` — delega en `GameBroker`
+- ✅ `[B]` `GameBroker` — busca el juego en RAWG por nombre, combina con logros de Steam, devuelve `DetalleJuego`
+- ✅ `[B]` `DetalleRepositoryImpl` — delega en `GameBroker`
 
 **Tests:**
-- [ ] `[B]` `GameBrokerTest` — RAWG encuentra el juego, RAWG no lo encuentra (fallback parcial), error en logros de Steam
+- ✅ `[B]` `GameBrokerTest` — RAWG encuentra el juego, RAWG no lo encuentra (fallback parcial), error en logros de Steam
 
 **Criterio de éxito:** `./gradlew test` pasa. Test manual con appId real devuelve un `DetalleJuego` completo.
 
@@ -245,8 +245,8 @@ org.example.dyds_proyecto2_ramones/
 > Depende de 3a y 3b.
 
 **Implementación (`di/`):**
-- [ ] `[B]` `NetworkModule` — instancias de Retrofit para Steam y RAWG con base URLs distintas
-- [ ] `[B]` Bindings de interfaces a implementaciones (`PerfilRepository`, `BibliotecaRepository`, `DetalleRepository`)
+- ✅ `[B]` `NetworkModule` — instancias de Retrofit para Steam y RAWG con base URLs distintas
+- ✅ `[B]` Bindings de interfaces a implementaciones (`PerfilRepository`, `BibliotecaRepository`, `DetalleRepository`)
 
 **Criterio de éxito:** la app compila con Koin inicializado y los repositorios inyectables desde la Etapa 5.
 
