@@ -11,23 +11,23 @@ Licenciatura en Ciencias de la Computación — UNS
 
 | Integrante | Responsabilidad principal | Etapas |
 |---|---|---|
-| **Persona A** | Setup del proyecto + capa Domain + tests de use cases | Etapa 1, Etapa 2, tests Domain (Etapa 6) |
-| **Persona B** | Data remota: Steam + RAWG + GameBroker + tests de data remota | Etapa 3, tests Data remota (Etapa 6) |
-| **Persona C** | Data local: Room/favoritos + Presentation: ViewModels + UI + tests de VM | Etapa 4, Etapa 5, tests Presentation y data local (Etapa 6) |
-| **Todos** | Pulido, revisión cruzada y entrega | Etapa 7 |
+| **Persona A** | Setup del proyecto + capa Domain + tests de use cases | Etapa 1, Etapa 2 |
+| **Persona B** | Data remota: Steam + RAWG + GameBroker + tests | Etapa 3 |
+| **Persona C** | Data local + Presentation: ViewModels + UI + tests | Etapa 4, Etapa 5 |
+| **Todos** | Pulido, revisión cruzada y entrega | Etapa 6 |
 
 ---
 
 ## Stack tecnológico
 
-| Componente | Tecnologia |
+| Componente | Tecnología |
 |---|---|
 | Lenguaje | Kotlin |
 | UI | Compose Multiplatform (Desktop) |
 | Arquitectura | Clean Architecture + MVVM |
-| DI | Koin o inyector manual por constructor |
+| DI | Koin |
 | Red | Retrofit + OkHttp + Gson |
-| Local | SQLDelight/SQLite + DataStore/Preferences |
+| Local | SQLDelight/SQLite |
 | Tests | JUnit4 + MockK + Turbine |
 | APIs | Steam Web API + RAWG Video Games Database |
 
@@ -37,7 +37,7 @@ Licenciatura en Ciencias de la Computación — UNS
 
 ```
 org.example.dyds_proyecto2_ramones/
-├── di/                         # Modulos DI
+├── di/                         # Módulos DI
 ├── presentation/
 │   ├── busqueda/               # BusquedaScreen + BusquedaViewModel
 │   ├── biblioteca/             # BibliotecaScreen + BibliotecaViewModel
@@ -45,8 +45,8 @@ org.example.dyds_proyecto2_ramones/
 │   ├── favoritos/              # FavoritosScreen + FavoritosViewModel
 │   └── common/                 # UiState, componentes reutilizables
 ├── domain/
-│   ├── model/                  # Juego, Perfil, Logro, Detalle
-│   ├── repository/             # Repository (interfaces)
+│   ├── model/                  # Juego, Perfil, Logro, DetalleJuego
+│   ├── repository/             # Interfaces de repositorio
 │   └── usecase/                # Un archivo por caso de uso
 └── data/
     ├── remote/
@@ -65,25 +65,23 @@ org.example.dyds_proyecto2_ramones/
 
 ---
 
-### Etapa 1 — Setup del proyecto y esqueleto de capas `[Persona A]`
-**Objetivo:** tener el proyecto desktop compilando con la estructura de paquetes completa y las dependencias configuradas.
+### Etapa 1 — Setup del proyecto `[Persona A]`
+**Objetivo:** tener el proyecto desktop compilando con dependencias configuradas y navegación funcional.
 
 **Tareas:**
-- [ ] `[A]` Crear proyecto Kotlin Desktop con Compose Multiplatform
-- [ ] `[A]` Agregar dependencias en `build.gradle`: DI, Retrofit/Ktor, Room/SQLDelight, DataStore/Preferences, Coroutines, Turbine, MockK
-- [ ] `[A]` Crear la estructura de paquetes vacía (todos los packages de arriba)
-- [ ] `[A]` Configurar el módulo base de DI para desktop (sin acoplar a Android)
-- [ ] `[A]` Configurar la navegación con las 4 rutas: `busqueda`, `biblioteca/{steamId}`, `detalle/{appId}`, `favoritos`
+- [ ] `[A]` Agregar dependencias mínimas en `build.gradle`: Compose Multiplatform, navegación, Coroutines
+- [ ] `[A]` Configurar navegación con las 4 rutas: `busqueda`, `biblioteca/{steamId}`, `detalle/{appId}`, `favoritos`
 - [ ] `[A]` Agregar pantallas placeholder (Composables vacíos) para que la navegación compile
 
-**Criterio de éxito:** el proyecto desktop compila, inicia en la pantalla de búsqueda vacía y la navegación entre pantallas funciona sin contenido real.
+**Criterio de éxito:** el proyecto compila, inicia en la pantalla de búsqueda vacía y la navegación entre pantallas funciona sin contenido real.
 
 ---
 
-### Etapa 2 — Capa Domain: modelos, interfaces y casos de uso `[Persona A]`
-**Objetivo:** definir el contrato completo del dominio sin ninguna dependencia externa.
+### Etapa 2 — Capa Domain `[Persona A]`
+**Objetivo:** definir el contrato completo del dominio sin ninguna dependencia externa, con tests.
 
-**Tareas:**
+**Dependencias:**
+- [ ] `[A]` Agregar JUnit4 + MockK
 
 **Modelos (`domain/model/`):**
 - [ ] `[A]` `Perfil(steamId, nombre, avatarUrl)`
@@ -107,67 +105,88 @@ org.example.dyds_proyecto2_ramones/
 - [ ] `[A]` `AgregarFavoritoUseCase`
 - [ ] `[A]` `EliminarFavoritoUseCase`
 
-**Criterio de éxito:** el módulo `domain` no importa ninguna clase de `data` ni de `presentation`. Los use cases son clases puras testeables con JUnit sin Android SDK.
+**Tests (`domain/usecase/`):**
+- [ ] `[A]` `GetPerfilUseCaseTest`
+- [ ] `[A]` `GetBibliotecaUseCaseTest`
+- [ ] `[A]` `FiltrarPorGeneroUseCaseTest` — género existente, género sin resultados, lista vacía
+- [ ] `[A]` `OrdenarPorHorasUseCaseTest` — orden descendente, juegos con mismas horas
+- [ ] `[A]` `GetDetalleUseCaseTest`
+- [ ] `[A]` `AgregarFavoritoUseCaseTest`
+- [ ] `[A]` `EliminarFavoritoUseCaseTest`
+
+**Criterio de éxito:** `./gradlew test` pasa. El módulo `domain` no importa ninguna clase de `data` ni de `presentation`.
 
 ---
 
 ### Etapa 3 — Capa Data: APIs remotas `[Persona B]`
-**Objetivo:** conectarse a Steam y RAWG y mapear las respuestas a los modelos del dominio.
+**Objetivo:** conectarse a Steam y RAWG, mapear respuestas a modelos del dominio y testear.
 
-**Tareas:**
+> Puede desarrollarse en paralelo con la Etapa 4 una vez que la Etapa 2 esté completa.
+
+**Dependencias:**
+- [ ] `[B]` Agregar Retrofit + OkHttp + Gson + Turbine
 
 **Steam (`data/remote/steam/`):**
 - [ ] `[B]` `SteamApiService` con Retrofit — endpoints:
-    - `GetPlayerSummaries` → perfil del usuario
-    - `GetOwnedGames` → biblioteca con horas jugadas
-    - `GetPlayerAchievements` → logros por juego
+  - `GetPlayerSummaries` → perfil del usuario
+  - `GetOwnedGames` → biblioteca con horas jugadas
+  - `GetPlayerAchievements` → logros por juego
 - [ ] `[B]` DTOs de respuesta (`SteamPerfilDto`, `SteamJuegoDto`, `SteamLogroDto`)
 - [ ] `[B]` `SteamRemoteDataSource` — convierte DTOs a modelos de dominio
 
 **RAWG (`data/remote/rawg/`):**
 - [ ] `[B]` `RawgApiService` con Retrofit — endpoints:
-    - `/games?search={nombre}` → búsqueda por nombre
-    - `/games/{id}` → detalle con Metacritic, géneros, descripción
-    - `/games/{id}/screenshots` → imágenes
+  - `/games?search={nombre}` → búsqueda por nombre
+  - `/games/{id}` → detalle con Metacritic, géneros, descripción
+  - `/games/{id}/screenshots` → imágenes
 - [ ] `[B]` DTOs de respuesta (`RawgJuegoDto`, `RawgDetalleDto`)
 - [ ] `[B]` `RawgRemoteDataSource` — convierte DTOs a modelos de dominio
 
-**Broker (`data/repository/`):**
-- [ ] `[B]` `GameBroker` — combina datos de Steam y RAWG para construir `DetalleJuego`:
-    - Busca el juego en RAWG por nombre
-    - Combina con logros de Steam
-    - Devuelve `DetalleJuego` completo
-
-**Implementaciones de repositorios:**
+**Broker y repositorios (`data/repository/`):**
+- [ ] `[B]` `GameBroker` — combina Steam y RAWG para construir `DetalleJuego`
 - [ ] `[B]` `PerfilRepositoryImpl`
 - [ ] `[B]` `BibliotecaRepositoryImpl`
 - [ ] `[B]` `DetalleRepositoryImpl` — delega en `GameBroker`
 
-**Modulo DI de red (`di/NetworkModule`):**
+**DI (`di/NetworkModule`):**
 - [ ] `[B]` Proveer instancias de Retrofit para Steam y RAWG (base URLs distintas)
 - [ ] `[B]` Bindings de interfaces a implementaciones
 
-**Criterio de éxito:** test manual o de integración que llame a `GetBibliotecaUseCase` con un SteamID real y loguee la lista de juegos.
+**Tests:**
+- [ ] `[B]` `PerfilRepositoryImplTest` — respuesta exitosa, error HTTP, timeout
+- [ ] `[B]` `BibliotecaRepositoryImplTest`
+- [ ] `[B]` `GameBrokerTest` — RAWG encuentra el juego, RAWG no lo encuentra (fallback parcial), error en logros de Steam
+
+**Criterio de éxito:** test de integración manual con un SteamID real loguea la lista de juegos. `./gradlew test` pasa.
 
 ---
 
 ### Etapa 4 — Capa Data: persistencia local `[Persona C]`
-**Objetivo:** implementar favoritos con almacenamiento local y que funcione offline.
+**Objetivo:** implementar favoritos con almacenamiento local y testear.
 
-**Tareas:**
-- [ ] `[C]` `FavoritoEntity` o modelo persistente equivalente — campos: `appId`, `nombre`, `iconUrl`, `horasJugadas`
-- [ ] `[C]` `FavoritoDao`/queries equivalentes
+> Puede desarrollarse en paralelo con la Etapa 3 una vez que la Etapa 2 esté completa.
+
+**Dependencias:**
+- [ ] `[C]` Agregar SQLDelight + Koin
+
+**Implementación:**
+- [ ] `[C]` `FavoritoEntity` — campos: `appId`, `nombre`, `iconUrl`, `horasJugadas`
+- [ ] `[C]` `FavoritoDao` / queries equivalentes
 - [ ] `[C]` `AppDatabase` o driver SQLite equivalente
-- [ ] `[C]` `FavoritosLocalDataSource` — wrapper que expone `Flow<List<Juego>>`
+- [ ] `[C]` `FavoritosLocalDataSource` — expone `Flow<List<Juego>>`
 - [ ] `[C]` `FavoritosRepositoryImpl`
-- [ ] `[C]` Modulo `DatabaseModule`/storage — proveer persistencia local
+- [ ] `[C]` `DatabaseModule` (Koin)
 
-**Criterio de exito:** test unitario que inserte y recupere un favorito usando una base local en memoria.
+**Tests:**
+- [ ] `[C]` `FavoritosLocalDataSourceTest` — insertar, recuperar, eliminar, duplicados (DB en memoria)
+- [ ] `[C]` `FavoritosRepositoryImplTest`
+
+**Criterio de éxito:** test inserta y recupera un favorito sin red. `./gradlew test` pasa.
 
 ---
 
 ### Etapa 5 — Presentation: ViewModels y UI `[Persona C]`
-**Objetivo:** conectar toda la lógica al usuario mediante Composables con manejo correcto de estados.
+**Objetivo:** conectar toda la lógica al usuario con manejo correcto de estados, y testear los ViewModels.
 
 **UiState base (`presentation/common/`):**
 ```kotlin
@@ -181,72 +200,39 @@ sealed class UiState<out T> {
 **BusquedaScreen:**
 - [ ] `[C]` `BusquedaViewModel` — expone `uiState: StateFlow<UiState<Perfil>>`; llama `GetPerfilUseCase`
 - [ ] `[C]` `BusquedaScreen` — campo de texto + botón buscar; navega a Biblioteca si el perfil existe
-- [ ] `[C]` Manejo visual de Loading (CircularProgressIndicator), Error (mensaje + retry), Success
+- [ ] `[C]` Manejo visual de Loading, Error (con retry), Success
+- [ ] `[C]` `BusquedaViewModelTest` — happy path, SteamID vacío, error de red
 
 **BibliotecaScreen:**
-- [ ] `[C]` `BibliotecaViewModel` — carga la lista, expone estado filtrado/ordenado; llama `GetBibliotecaUseCase`, `FiltrarPorGeneroUseCase`, `OrdenarPorHorasUseCase`
-- [ ] `[C]` `BibliotecaScreen` — LazyColumn con chips de género y botón de orden; cada item navega a Detalle
-- [ ] `[C]` Estado vacío si la biblioteca no tiene juegos
+- [ ] `[C]` `BibliotecaViewModel` — carga lista, expone estado filtrado/ordenado; llama `GetBibliotecaUseCase`, `FiltrarPorGeneroUseCase`, `OrdenarPorHorasUseCase`
+- [ ] `[C]` `BibliotecaScreen` — LazyColumn con chips de género y botón de orden; cada item navega a Detalle; estado vacío
+- [ ] `[C]` `BibliotecaViewModelTest` — lista completa, filtro por género, ordenamiento por horas, lista vacía
 
 **DetalleScreen:**
 - [ ] `[C]` `DetalleViewModel` — llama `GetDetalleUseCase`; expone `DetalleJuego` + `esFavorito: StateFlow<Boolean>`
-- [ ] `[C]` `DetalleScreen` — nombre, horas, descripción, Metacritic score, screenshots (HorizontalPager), lista de logros, botón toggle favorito
+- [ ] `[C]` `DetalleScreen` — nombre, horas, descripción, Metacritic score, screenshots (HorizontalPager), logros, botón toggle favorito
 - [ ] `[C]` Manejo de error si RAWG no encuentra el juego (mostrar solo datos de Steam)
+- [ ] `[C]` `DetalleViewModelTest` — detalle completo, fallback sin RAWG, toggle favorito
 
 **FavoritosScreen:**
 - [ ] `[C]` `FavoritosViewModel` — colecta `Flow` de `GetFavoritosUseCase`
-- [ ] `[C]` `FavoritosScreen` — LazyColumn; swipe-to-delete o botón de eliminar; estado vacío con mensaje
-- [ ] `[C]` Navegación a Detalle desde cada favorito
-
-**Criterio de éxito:** flujo completo navegable: buscar SteamID → ver biblioteca → abrir detalle → agregar favorito → verlo en Favoritos.
-
----
-
-### Etapa 6 — Tests unitarios `[distribuido: ver etiquetas]`
-**Objetivo:** cubrir todos los componentes exigidos por la cátedra.
-
-**ViewModels — con MockK + Turbine `[Persona C]`:**
-- [ ] `[C]` `BusquedaViewModelTest` — happy path (perfil encontrado), SteamID vacío, error de red
-- [ ] `[C]` `BibliotecaViewModelTest` — lista completa, filtro por género, ordenamiento por horas, lista vacía
-- [ ] `[C]` `DetalleViewModelTest` — detalle completo, RAWG sin resultados (fallback), toggle favorito
+- [ ] `[C]` `FavoritosScreen` — LazyColumn con eliminar; estado vacío con mensaje; navega a Detalle
 - [ ] `[C]` `FavoritosViewModelTest` — lista con items, lista vacía, eliminar favorito
 
-**Use Cases — JUnit puro `[Persona A]`:**
-- [ ] `[A]` `GetPerfilUseCaseTest`
-- [ ] `[A]` `GetBibliotecaUseCaseTest`
-- [ ] `[A]` `FiltrarPorGeneroUseCaseTest` — género existente, género sin resultados, lista vacía
-- [ ] `[A]` `OrdenarPorHorasUseCaseTest` — orden descendente, juegos con mismas horas
-- [ ] `[A]` `GetDetalleUseCaseTest`
-- [ ] `[A]` `AgregarFavoritoUseCaseTest`, `EliminarFavoritoUseCaseTest`
-
-**Repositorios e implementaciones remotas — con MockK `[Persona B]`:**
-- [ ] `[B]` `PerfilRepositoryImplTest` — respuesta exitosa, error HTTP, timeout
-- [ ] `[B]` `BibliotecaRepositoryImplTest`
-
-**Repositorio local — con MockK `[Persona C]`:**
-- [ ] `[C]` `FavoritosRepositoryImplTest`
-
-**DataSources locales — Room in-memory `[Persona C]`:**
-- [ ] `[C]` `FavoritosLocalDataSourceTest` — insertar, recuperar, eliminar, duplicados
-
-**GameBroker `[Persona B]`:**
-- [ ] `[B]` `GameBrokerTest` — RAWG encuentra el juego, RAWG no lo encuentra (fallback parcial), error en logros de Steam
-
-**Criterio de éxito:** `./gradlew test` pasa sin errores; cobertura de happy paths y al menos un edge case por componente.
+**Criterio de éxito:** flujo completo navegable: buscar SteamID → ver biblioteca → abrir detalle → agregar favorito → verlo en Favoritos. `./gradlew test` pasa.
 
 ---
 
-### Etapa 7 — Pulido, manejo de errores y entrega `[Todos]`
+### Etapa 6 — Pulido y entrega `[Todos]`
 **Objetivo:** dejar la app robusta y el repositorio listo para la presentación.
 
-**Tareas:**
-- [ ] `[Todos]` Revisar que no existan magic strings ni magic numbers (mover a `Constants.kt`)
-- [ ] `[Todos]` Eliminar imports sin usar, código muerto y TODO sin resolver
-- [ ] `[Todos]` Revisar que todas las funciones tengan menos de ~20 líneas (extraer si no)
+- [ ] `[Todos]` Mover magic strings y magic numbers a `Constants.kt`
+- [ ] `[Todos]` Eliminar imports sin usar, código muerto y TODOs sin resolver
+- [ ] `[Todos]` Revisar que las funciones tengan menos de ~20 líneas
 - [ ] `[B]` Agregar interceptor de OkHttp para logging en debug
 - [ ] `[C]` Pantallas de error con botón "Reintentar" en todas las screens
 - [ ] `[C]` Validación del campo SteamID antes de lanzar la petición
-- [ ] `[C]` Probar sin internet: favoritos deben seguir visibles desde Room
+- [ ] `[C]` Probar sin internet: favoritos deben seguir visibles desde la DB local
 - [ ] `[A]` Limpiar el README con instrucciones de setup (API keys, cómo correr los tests)
 - [ ] `[Todos]` Tag de versión `v1.0` en git
 
@@ -256,12 +242,11 @@ sealed class UiState<out T> {
 
 | Etapa | Foco | Dependencias previas | Responsable |
 |---|---|---|---|
-| 1 | Setup y esqueleto | — | **Persona A** |
-| 2 | Domain (modelos, interfaces, use cases) | Etapa 1 | **Persona A** |
-| 3 | Data remota (Steam + RAWG + Broker) | Etapa 2 | **Persona B** |
-| 4 | Data local (Room, favoritos) | Etapa 2 | **Persona C** |
-| 5 | Presentation (ViewModels + UI) | Etapas 2, 3, 4 | **Persona C** |
-| 6 | Tests unitarios | Etapas 2, 3, 4, 5 | **A** (domain) · **B** (data remota) · **C** (local + VM) |
-| 7 | Pulido y entrega | Etapas 1–6 | **Todos** |
+| 1 | Setup y navegación | — | **Persona A** |
+| 2 | Domain (modelos, interfaces, use cases + tests) | Etapa 1 | **Persona A** |
+| 3 | Data remota (Steam + RAWG + Broker + tests) | Etapa 2 | **Persona B** |
+| 4 | Data local (favoritos + tests) | Etapa 2 | **Persona C** |
+| 5 | Presentation (ViewModels + UI + tests) | Etapas 3 y 4 | **Persona C** |
+| 6 | Pulido y entrega | Etapas 1–5 | **Todos** |
 
-> **Recomendación:** las etapas 3 y 4 pueden hacerse en paralelo por distintos integrantes del grupo una vez que el Domain está definido (Etapa 2). La Etapa 2 es el contrato compartido — hacerla primero evita que el resto del grupo quede bloqueado.
+> Las etapas 3 y 4 pueden hacerse en paralelo una vez que la Etapa 2 esté completa.
