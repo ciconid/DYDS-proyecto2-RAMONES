@@ -77,23 +77,23 @@ org.example.dyds_proyecto2_ramones/
 
 ---
 
-### Etapa 2a — Modelos e interfaces del dominio `[Persona A]`
+### ✅ Etapa 2a — Modelos e interfaces del dominio `[Persona A]`
 **Objetivo:** definir el contrato puro del dominio que desbloquea al resto del equipo.
 
 **Dependencias:**
-- [ ] `[A]` Agregar JUnit4 + MockK
+- ✅ `[A]` Agregar JUnit4 + MockK
 
 **Modelos (`domain/model/`):**
-- [ ] `[A]` `Perfil(steamId, nombre, avatarUrl)`
-- [ ] `[A]` `Juego(appId, nombre, horasJugadas, iconUrl, generos)`
-- [ ] `[A]` `Logro(nombre, descripcion, conseguido, iconUrl)`
-- [ ] `[A]` `DetalleJuego(juego, descripcion, metacriticScore, screenshots, logros)`
+- ✅ `[A]` `Perfil(steamId, nombre, avatarUrl)`
+- ✅ `[A]` `Juego(appId, nombre, horasJugadas, iconUrl, generos)`
+- ✅ `[A]` `Logro(nombre, descripcion, conseguido, iconUrl)`
+- ✅ `[A]` `DetalleJuego(juego, descripcion, metacriticScore, screenshots, logros)`
 
 **Interfaces (`domain/repository/`):**
-- [ ] `[A]` `PerfilRepository` → `getPerfil(steamId): Result<Perfil>`
-- [ ] `[A]` `BibliotecaRepository` → `getBiblioteca(steamId): Result<List<Juego>>`
-- [ ] `[A]` `DetalleRepository` → `getDetalle(steamId, appId): Result<DetalleJuego>`
-- [ ] `[A]` `FavoritosRepository` → `getFavoritos(): Flow<List<Juego>>`, `agregar(juego)`, `eliminar(appId)`
+- ✅ `[A]` `PerfilRepository` → `getPerfil(steamId): Result<Perfil>`
+- ✅ `[A]` `BibliotecaRepository` → `getBiblioteca(steamId): Result<List<Juego>>`
+- ✅ `[A]` `DetalleRepository` → `getDetalle(steamId, appId): Result<DetalleJuego>`
+- ✅ `[A]` `FavoritosRepository` → `getFavoritos(): Flow<List<Juego>>`, `agregar(juego)`, `eliminar(appId)`
 
 **Criterio de éxito:** compila sin errores. Las etapas 2b–2i, 3 y 4 pueden arrancar.
 
