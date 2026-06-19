@@ -36,7 +36,7 @@ Licenciatura en Ciencias de la Computación — UNS
 ## Estructura de paquetes
 
 ```
-com.grupo.steamprofile/
+org.example.dyds_proyecto2_ramones/
 ├── di/                         # Modulos DI
 ├── presentation/
 │   ├── busqueda/               # BusquedaScreen + BusquedaViewModel
