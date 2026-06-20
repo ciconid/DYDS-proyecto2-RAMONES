@@ -1,25 +1,30 @@
 package org.example.dyds_proyecto2_ramones.data.remote.steam
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SteamPerfilResponseDto(
-    @SerializedName("response")
+    @SerialName("response")
     val response: SteamPlayerWrapperDto
 )
 
+@Serializable
 data class SteamPlayerWrapperDto(
-    @SerializedName("players")
+    @SerialName("players")
     val players: List<SteamPlayerSummaryDto>
 )
 
+@Serializable
 data class SteamPlayerSummaryDto(
-    @SerializedName("steamid")
+    @SerialName("steamid")
     val steamid: String,
-    @SerializedName("personaname")
+    @SerialName("personaname")
     val personaname: String,
-    @SerializedName("avatarfull")
+    @SerialName("avatarfull")
     val avatarfull: String
 )
+
 
 
 

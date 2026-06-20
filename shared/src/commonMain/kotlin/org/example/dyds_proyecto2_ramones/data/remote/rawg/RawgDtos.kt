@@ -1,52 +1,60 @@
 package org.example.dyds_proyecto2_ramones.data.remote.rawg
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RawgSearchResponseDto(
-    @SerializedName("results")
+    @SerialName("results")
     val results: List<RawgGameDto>
 )
 
+@Serializable
 data class RawgGameDto(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Int,
-    @SerializedName("name")
+    @SerialName("name")
     val name: String,
-    @SerializedName("metacritic")
+    @SerialName("metacritic")
     val metacritic: Int?,
-    @SerializedName("background_image")
+    @SerialName("background_image")
     val background_image: String?,
-    @SerializedName("genres")
+    @SerialName("genres")
     val genres: List<RawgGenreDto> = emptyList()
 )
 
+@Serializable
 data class RawgGenreDto(
-    @SerializedName("name")
+    @SerialName("name")
     val name: String
 )
 
+@Serializable
 data class RawgDetalleDto(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Int,
-    @SerializedName("name")
+    @SerialName("name")
     val name: String,
-    @SerializedName("description_raw")
+    @SerialName("description_raw")
     val description_raw: String,
-    @SerializedName("metacritic")
+    @SerialName("metacritic")
     val metacritic: Int?,
-    @SerializedName("background_image")
+    @SerialName("background_image")
     val background_image: String?,
-    @SerializedName("genres")
+    @SerialName("genres")
     val genres: List<RawgGenreDto> = emptyList(),
 )
 
+@Serializable
 data class RawgScreenshotsResponseDto(
-    @SerializedName("results")
+    @SerialName("results")
     val results: List<RawgScreenshotDto>
 )
 
+@Serializable
 data class RawgScreenshotDto(
-    @SerializedName("image")
+    @SerialName("image")
     val image: String
 )
+
 

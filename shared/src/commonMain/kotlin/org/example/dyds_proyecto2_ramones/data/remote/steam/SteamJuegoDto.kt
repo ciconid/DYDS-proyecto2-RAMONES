@@ -1,29 +1,34 @@
 package org.example.dyds_proyecto2_ramones.data.remote.steam
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class SteamBibliotecaResponseDto(
-    @SerializedName("response")
+    @SerialName("response")
     val response: SteamBibliotecaWrapperDto
 )
 
+@Serializable
 data class SteamBibliotecaWrapperDto(
-    @SerializedName("games")
+    @SerialName("games")
     val games: List<SteamJuegoDto>?,
-    @SerializedName("game_count")
+    @SerialName("game_count")
     val game_count: Int
 )
 
+@Serializable
 data class SteamJuegoDto(
-    @SerializedName("appid")
+    @SerialName("appid")
     val appid: Long,
-    @SerializedName("name")
+    @SerialName("name")
     val name: String,
-    @SerializedName("playtime_forever")
+    @SerialName("playtime_forever")
     val playtime_forever: Long,
-    @SerializedName("img_icon_url")
+    @SerialName("img_icon_url")
     val img_icon_url: String
 )
+
 
 
 

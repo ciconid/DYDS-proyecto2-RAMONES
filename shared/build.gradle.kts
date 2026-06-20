@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     id("com.squareup.sqldelight") version "1.5.5"
+    kotlin("plugin.serialization")
 }
 
 kotlin {
@@ -23,6 +24,10 @@ kotlin {
                 implementation(libs.kotlinx.coroutinesCore)
                 implementation("com.squareup.sqldelight:runtime:1.5.5")
                 implementation(libs.koin.core)
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+                implementation("io.ktor:ktor-client-core:2.3.12")
+                implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
             }
         }
 
@@ -38,18 +43,14 @@ kotlin {
                 implementation(libs.junit)
                 implementation(libs.mockk)
                 implementation("com.squareup.sqldelight:sqlite-driver:1.5.5")
+                implementation("io.ktor:ktor-client-mock:2.3.12")
             }
         }
 
         val jvmMain by getting {
             dependencies {
                 implementation("com.squareup.sqldelight:sqlite-driver:1.5.5")
-                implementation("com.squareup.retrofit2:retrofit:2.9.0")
-                implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-                implementation("com.squareup.okhttp3:okhttp:4.11.0")
-                implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
-                implementation("com.google.code.gson:gson:2.10.1")
-                implementation("io.insert-koin:koin-core:3.4.0")
+                implementation("io.ktor:ktor-client-cio:2.3.12")
             }
         }
     }
