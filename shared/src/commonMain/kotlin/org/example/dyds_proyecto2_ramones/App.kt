@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.koin.java.KoinJavaComponent.inject
 import org.example.dyds_proyecto2_ramones.presentation.biblioteca.BibliotecaScreen
 import org.example.dyds_proyecto2_ramones.presentation.busqueda.BusquedaScreen
+import org.example.dyds_proyecto2_ramones.presentation.busqueda.BusquedaViewModel
 import org.example.dyds_proyecto2_ramones.presentation.common.NavigationRail
 import org.example.dyds_proyecto2_ramones.presentation.common.Screen
 import org.example.dyds_proyecto2_ramones.presentation.detalle.DetalleScreen
@@ -23,6 +24,7 @@ import org.example.dyds_proyecto2_ramones.presentation.favoritos.FavoritosScreen
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetFavoritosUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.AgregarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.GetPerfilUseCase
 
 @Composable
 @Preview
@@ -32,10 +34,13 @@ fun App() {
 
         var currentScreen by remember { mutableStateOf<Screen>(Screen.Busqueda) }
         var railExpanded by remember { mutableStateOf(false) }
+        var selectedSteamId by remember { mutableStateOf("") }
 
+        val getPerfilUseCase: GetPerfilUseCase by inject(GetPerfilUseCase::class.java)
         val getFavoritosUseCase: GetFavoritosUseCase by inject(GetFavoritosUseCase::class.java)
         val agregarFavoritoUseCase: AgregarFavoritoUseCase by inject(AgregarFavoritoUseCase::class.java)
         val eliminarFavoritoUseCase: EliminarFavoritoUseCase by inject(EliminarFavoritoUseCase::class.java)
+        val busquedaViewModel = remember(getPerfilUseCase) { BusquedaViewModel(getPerfilUseCase) }
 
         Row(
             modifier = Modifier
@@ -56,12 +61,16 @@ fun App() {
             ) {
                 when (currentScreen) {
                     is Screen.Busqueda -> BusquedaScreen(
-                        onNavigateBiblioteca = { currentScreen = Screen.Biblioteca },
+                        onNavigateBiblioteca = { steamId ->
+                            selectedSteamId = steamId
+                            currentScreen = Screen.Biblioteca
+                        },
                         onNavigateFavoritos = { currentScreen = Screen.Favoritos },
+                        viewModel = busquedaViewModel,
                     )
 
                     is Screen.Biblioteca -> BibliotecaScreen(
-                        steamId = "76561198000000000",
+                        steamId = selectedSteamId,
                         onNavigateDetalle = { appId -> currentScreen = Screen.Detalle(appId) },
                         onNavigateFavoritos = { currentScreen = Screen.Favoritos },
                         onNavigateBack = { currentScreen = Screen.Busqueda },

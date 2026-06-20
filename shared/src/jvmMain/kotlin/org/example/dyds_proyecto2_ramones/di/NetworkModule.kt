@@ -23,8 +23,9 @@ import kotlin.coroutines.CoroutineContext
 private const val STEAM_BASE_URL = "https://api.steampowered.com/"
 private const val RAWG_BASE_URL = "https://api.rawg.io/api/"
 
-private fun getSteamApiKey(): String =
-    System.getProperty("steam.api.key") ?: System.getenv("STEAM_API_KEY") ?: ""
+private fun getSteamApiKey(): String = "855078138592C196E044AAA58B1649A1"
+    //System.getProperty("steam.api.key") ?: System.getenv("STEAM_API_KEY") ?: ""
+
 
 private fun getRawgApiKey(): String =
     System.getProperty("rawg.api.key") ?: System.getenv("RAWG_API_KEY") ?: ""

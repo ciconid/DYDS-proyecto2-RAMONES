@@ -17,9 +17,11 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.Composable
@@ -35,11 +37,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import org.example.dyds_proyecto2_ramones.presentation.common.UiState
 
 @Composable
 fun BusquedaScreen(
     onNavigateBiblioteca: (String) -> Unit,
     onNavigateFavoritos: () -> Unit,
+    viewModel: BusquedaViewModel,
 ) {
     val bgBase = Color(0xFF0E1117)
     val bgSurface = Color(0xFF161B27)
@@ -49,18 +56,24 @@ fun BusquedaScreen(
     val border = Color(0xFF242D42)
     val danger = Color(0xFFE2574C)
 
+    val scope = rememberCoroutineScope()
     var steamIdInput by remember { mutableStateOf("") }
-    var showError by remember { mutableStateOf(false) }
+    var lastNavigatedSteamId by remember { mutableStateOf<String?>(null) }
+
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState) {
+        val successState = uiState as? UiState.Success ?: return@LaunchedEffect
+        if (lastNavigatedSteamId == successState.data.steamId) return@LaunchedEffect
+
+        lastNavigatedSteamId = successState.data.steamId
+        onNavigateBiblioteca(successState.data.steamId)
+    }
 
     fun onSearch() {
-        val value = steamIdInput.trim()
-        if (value.isEmpty()) {
-            showError = true
-            return
+        scope.launch {
+            viewModel.buscarPerfil(steamIdInput)
         }
-
-        showError = false
-        onNavigateBiblioteca(value)
     }
 
     Box(
@@ -111,9 +124,6 @@ fun BusquedaScreen(
                 value = steamIdInput,
                 onValueChange = {
                     steamIdInput = it
-                    if (showError && it.isNotBlank()) {
-                        showError = false
-                    }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -145,6 +155,10 @@ fun BusquedaScreen(
                 ),
             )
 
+            if (uiState is UiState.Loading) {
+                CircularProgressIndicator(color = accent)
+            }
+
             Button(
                 onClick = { onSearch() },
                 modifier = Modifier
@@ -167,15 +181,32 @@ fun BusquedaScreen(
                 }
             }
 
-            if (showError) {
+            val errorMessage = (uiState as? UiState.Error)?.message
+            if (!errorMessage.isNullOrBlank()) {
                 Text(
-                    text = "Ingresa un SteamID para continuar",
+                    text = errorMessage,
                     color = danger,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Normal,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                 )
+
+                Button(
+                    onClick = {
+                        scope.launch {
+                            viewModel.reintentar()
+                        }
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = textPrim,
+                    ),
+                    border = BorderStroke(1.dp, border),
+                ) {
+                    Text("Reintentar", fontSize = 12.sp)
+                }
             }
 
             Text(

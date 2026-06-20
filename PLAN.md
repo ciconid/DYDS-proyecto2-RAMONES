@@ -286,11 +286,11 @@ sealed class UiState<out T> {
 }
 ```
 
-**BusquedaScreen:**
-- [ ] `[C]` `BusquedaViewModel` — expone `uiState: StateFlow<UiState<Perfil>>`; llama `GetPerfilUseCase`
-- [ ] `[C]` `BusquedaScreen` — campo de texto + botón buscar; navega a Biblioteca si el perfil existe
-- [ ] `[C]` Manejo visual de Loading, Error (con retry), Success
-- [ ] `[C]` `BusquedaViewModelTest` — happy path, SteamID vacío, error de red
+**✅BusquedaScreen:**
+- ✅ `[C]` `BusquedaViewModel` — expone `uiState: StateFlow<UiState<Perfil>>`; llama `GetPerfilUseCase`
+- ✅ `[C]` `BusquedaScreen` — campo de texto + botón buscar; navega a Biblioteca si el perfil existe
+- ✅ `[C]` Manejo visual de Loading, Error (con retry), Success
+- ✅ `[C]` `BusquedaViewModelTest` — happy path, SteamID vacío, error de red
 
 **BibliotecaScreen:**
 - [ ] `[C]` `BibliotecaViewModel` — carga lista, expone estado filtrado/ordenado; llama `GetBibliotecaUseCase`, `FiltrarPorGeneroUseCase`, `OrdenarPorHorasUseCase`
