@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.java.KoinJavaComponent.inject
 import org.example.dyds_proyecto2_ramones.presentation.biblioteca.BibliotecaScreen
+import org.example.dyds_proyecto2_ramones.presentation.biblioteca.BibliotecaViewModel
 import org.example.dyds_proyecto2_ramones.presentation.busqueda.BusquedaScreen
 import org.example.dyds_proyecto2_ramones.presentation.busqueda.BusquedaViewModel
 import org.example.dyds_proyecto2_ramones.presentation.common.NavigationRail
@@ -25,6 +26,9 @@ import org.example.dyds_proyecto2_ramones.domain.usecase.GetFavoritosUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.AgregarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetPerfilUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.GetBibliotecaUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.FiltrarPorGeneroUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.OrdenarPorHorasUseCase
 
 @Composable
 @Preview
@@ -37,10 +41,16 @@ fun App() {
         var selectedSteamId by remember { mutableStateOf("") }
 
         val getPerfilUseCase: GetPerfilUseCase by inject(GetPerfilUseCase::class.java)
+        val getBibliotecaUseCase: GetBibliotecaUseCase by inject(GetBibliotecaUseCase::class.java)
+        val filtrarPorGeneroUseCase: FiltrarPorGeneroUseCase by inject(FiltrarPorGeneroUseCase::class.java)
+        val ordenarPorHorasUseCase: OrdenarPorHorasUseCase by inject(OrdenarPorHorasUseCase::class.java)
         val getFavoritosUseCase: GetFavoritosUseCase by inject(GetFavoritosUseCase::class.java)
         val agregarFavoritoUseCase: AgregarFavoritoUseCase by inject(AgregarFavoritoUseCase::class.java)
         val eliminarFavoritoUseCase: EliminarFavoritoUseCase by inject(EliminarFavoritoUseCase::class.java)
         val busquedaViewModel = remember(getPerfilUseCase) { BusquedaViewModel(getPerfilUseCase) }
+        val bibliotecaViewModel = remember(getBibliotecaUseCase, filtrarPorGeneroUseCase, ordenarPorHorasUseCase) {
+            BibliotecaViewModel(getBibliotecaUseCase, filtrarPorGeneroUseCase, ordenarPorHorasUseCase)
+        }
 
         Row(
             modifier = Modifier
@@ -74,6 +84,7 @@ fun App() {
                         onNavigateDetalle = { appId -> currentScreen = Screen.Detalle(appId) },
                         onNavigateFavoritos = { currentScreen = Screen.Favoritos },
                         onNavigateBack = { currentScreen = Screen.Busqueda },
+                        viewModel = bibliotecaViewModel,
                     )
 
                     is Screen.Detalle -> DetalleScreen(

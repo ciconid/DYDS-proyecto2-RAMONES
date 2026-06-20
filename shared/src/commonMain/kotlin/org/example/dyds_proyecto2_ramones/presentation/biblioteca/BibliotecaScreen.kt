@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,11 +21,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.example.dyds_proyecto2_ramones.domain.model.Juego
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -47,6 +50,7 @@ fun BibliotecaScreen(
     onNavigateDetalle: (String) -> Unit,
     onNavigateFavoritos: () -> Unit,
     onNavigateBack: () -> Unit,
+    viewModel: BibliotecaViewModel,
 ) {
     val bgBase = Color(0xFF0E1117)
     val bgSurface = Color(0xFF161B27)
@@ -57,25 +61,13 @@ fun BibliotecaScreen(
     val textMuted = Color(0xFF7A8599)
     val border = Color(0xFF242D42)
 
-    val genres = listOf("Todos", "Accion", "RPG", "Estrategia", "Shooter")
-    val games = remember {
-        listOf(
-            Juego("570", "Dota 2", 124.5, "", listOf("Estrategia")),
-            Juego("730", "Counter-Strike 2", 310.0, "", listOf("Shooter", "Accion")),
-            Juego("578080", "PUBG", 57.3, "", listOf("Shooter", "Accion")),
-            Juego("1174180", "Red Dead Redemption 2", 88.0, "", listOf("RPG", "Accion")),
-            Juego("39210", "Final Fantasy XIV", 203.2, "", listOf("RPG")),
-        )
-    }
-
-    var selectedGenre by remember { mutableStateOf("Todos") }
-    var sortDesc by remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
     var activeAppId by remember { mutableStateOf<String?>(null) }
+    val uiState by viewModel.uiState.collectAsState()
 
-    val filtered = games.filter {
-        selectedGenre == "Todos" || it.generos.any { g -> g.equals(selectedGenre, ignoreCase = true) }
+    LaunchedEffect(steamId) {
+        viewModel.cargarBiblioteca(steamId)
     }
-    val visibleGames = if (sortDesc) filtered.sortedByDescending { it.horasJugadas } else filtered.sortedBy { it.horasJugadas }
 
     Column(
         modifier = Modifier
@@ -92,22 +84,44 @@ fun BibliotecaScreen(
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text("Biblioteca", color = textPrim, fontSize = 20.sp, fontWeight = FontWeight.Medium)
                 Text(
-                    text = "Perfil $steamId • ${games.size} juegos",
+                    text = "Perfil ${uiState.steamId.ifBlank { steamId }} • ${uiState.juegosVisibles.size} juegos",
                     color = textMuted,
                     fontSize = 13.sp,
                 )
             }
 
-            Button(
-                onClick = { sortDesc = !sortDesc },
-                colors = ButtonDefaults.buttonColors(containerColor = elevated, contentColor = textPrim),
-                border = BorderStroke(1.dp, border),
-                shape = RoundedCornerShape(8.dp),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                    SortOutlineIcon(tint = textPrim)
-                    Text("Horas", fontSize = 12.sp, fontWeight = FontWeight.Normal)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Button(
+                    onClick = onNavigateBack,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = textPrim),
+                    border = BorderStroke(1.dp, border),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
+                ) {
+                    Text("Volver", fontSize = 12.sp, fontWeight = FontWeight.Normal)
+                }
+
+                Button(
+                    onClick = onNavigateFavoritos,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = textPrim),
+                    border = BorderStroke(1.dp, border),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
+                ) {
+                    Text("Favoritos", fontSize = 12.sp, fontWeight = FontWeight.Normal)
+                }
+
+                Button(
+                    onClick = { viewModel.toggleOrden() },
+                    colors = ButtonDefaults.buttonColors(containerColor = elevated, contentColor = textPrim),
+                    border = BorderStroke(1.dp, border),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                        SortOutlineIcon(tint = textPrim)
+                        Text("Horas", fontSize = 12.sp, fontWeight = FontWeight.Normal)
+                    }
                 }
             }
         }
@@ -117,13 +131,13 @@ fun BibliotecaScreen(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            genres.forEach { genre ->
-                val isActive = genre == selectedGenre
+            uiState.generosDisponibles.forEach { genre ->
+                val isActive = genre == uiState.selectedGenero
                 Box(
                     modifier = Modifier
                         .background(if (isActive) accentDim else bgSurface, RoundedCornerShape(20.dp))
                         .border(1.dp, if (isActive) accent else border, RoundedCornerShape(20.dp))
-                        .clickable { selectedGenre = genre }
+                        .clickable { viewModel.seleccionarGenero(genre) }
                         .padding(horizontal = 12.dp, vertical = 7.dp),
                 ) {
                     Text(genre, color = if (isActive) accent else textMuted, fontSize = 12.sp)
@@ -131,7 +145,34 @@ fun BibliotecaScreen(
             }
         }
 
-        if (visibleGames.isEmpty()) {
+        if (uiState.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = accent)
+            }
+        } else if (!uiState.errorMessage.isNullOrBlank()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        text = uiState.errorMessage ?: "Error al cargar biblioteca",
+                        color = textMuted,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                    )
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                viewModel.reintentar()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = elevated, contentColor = textPrim),
+                        border = BorderStroke(1.dp, border),
+                        shape = RoundedCornerShape(8.dp),
+                    ) {
+                        Text("Reintentar", fontSize = 12.sp)
+                    }
+                }
+            }
+        } else if (uiState.juegosVisibles.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text("🎮", fontSize = 42.sp, modifier = Modifier.alpha(0.4f))
@@ -143,7 +184,7 @@ fun BibliotecaScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                items(visibleGames) { game ->
+                items(uiState.juegosVisibles) { game ->
                     val isActive = activeAppId == game.appId
                     Row(
                         modifier = Modifier
