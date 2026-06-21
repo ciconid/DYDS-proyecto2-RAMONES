@@ -1,7 +1,11 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.buildkonfig)
     id("com.squareup.sqldelight") version "1.5.5"
     kotlin("plugin.serialization")
 }
@@ -60,5 +64,29 @@ sqldelight {
     database("AppDatabase") {
         packageName = "org.example.dyds_proyecto2_ramones.data.local.sqldelight"
         sourceFolders = listOf("sqldelight")
+    }
+}
+
+val localProperties = Properties().apply {
+    val localFile = rootProject.file("local.properties")
+    if (localFile.exists()) {
+        load(FileInputStream(localFile))
+    }
+}
+
+buildkonfig {
+    packageName = "org.example.dyds_proyecto2_ramones.data"
+
+    defaultConfigs {
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "STEAM_KEY",
+            localProperties.getProperty("STEAM_API_KEY") ?: System.getenv("STEAM_API_KEY") ?: ""
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "RAWG_KEY",
+            localProperties.getProperty("RAWG_API_KEY") ?: System.getenv("RAWG_API_KEY") ?: ""
+        )
     }
 }

@@ -12,14 +12,7 @@ import org.example.dyds_proyecto2_ramones.data.remote.steam.SteamRemoteDataSourc
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import kotlin.coroutines.CoroutineContext
-
-private fun getSteamApiKey(): String =
-    System.getProperty("steam.api.key")
-        ?: System.getenv("STEAM_API_KEY")
-        ?: "855078138592C196E044AAA58B1649A1"
-
-private fun getRawgApiKey(): String =
-    System.getProperty("rawg.api.key") ?: System.getenv("RAWG_API_KEY") ?: ""
+import org.example.dyds_proyecto2_ramones.data.BuildKonfig
 
 val networkModule = module {
     single<CoroutineContext>(named("io")) { Dispatchers.IO }
@@ -36,11 +29,18 @@ val networkModule = module {
     }
 
     single<SteamRemoteDataSource> {
-        SteamRemoteDataSourceImpl(get<HttpClient>(), getSteamApiKey(), get(named("io")))
+        SteamRemoteDataSourceImpl(
+            client = get<HttpClient>(),
+            apiKey = BuildKonfig.STEAM_KEY,
+            ioDispatcher = get(named("io"))
+        )
     }
 
     single<RawgRemoteDataSource> {
-        RawgRemoteDataSourceImpl(get<HttpClient>(), getRawgApiKey(), get(named("io")))
+        RawgRemoteDataSourceImpl(
+            client = get<HttpClient>(),
+            apiKey = BuildKonfig.RAWG_KEY,
+            ioDispatcher = get(named("io"))
+        )
     }
 }
-

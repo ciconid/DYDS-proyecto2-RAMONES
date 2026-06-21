@@ -1,0 +1,4 @@
+# Copia este archivo, renombralo a 'local.properties' y coloca tus API KEY.
+
+STEAM_API_KEY=
+RAWG_API_KEY=
