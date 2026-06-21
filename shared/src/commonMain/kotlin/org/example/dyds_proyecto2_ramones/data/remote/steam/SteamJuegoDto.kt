@@ -12,9 +12,9 @@ data class SteamBibliotecaResponseDto(
 @Serializable
 data class SteamBibliotecaWrapperDto(
     @SerialName("games")
-    val games: List<SteamJuegoDto>?,
+    val games: List<SteamJuegoDto>? = emptyList(),
     @SerialName("game_count")
-    val game_count: Int
+    val game_count: Int = 0
 )
 
 @Serializable

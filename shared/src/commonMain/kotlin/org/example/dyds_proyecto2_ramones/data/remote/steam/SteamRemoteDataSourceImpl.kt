@@ -39,6 +39,7 @@ class SteamRemoteDataSourceImpl(
                     parameter("key", apiKey)
                     parameter("steamid", steamId)
                     parameter("include_appinfo", true)
+                    parameter("include_played_free_games", true)
                 }.body()
                 val wrapper = response.response
                 val games = wrapper.games ?: emptyList()
