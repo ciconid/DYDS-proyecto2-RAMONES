@@ -43,7 +43,7 @@ class SteamRemoteDataSourceImplTest {
     }
 
     @Test
-    fun `fetchPerfil returns Perfil on success`() = runBlocking {
+    fun `fetchPerfil returns SteamPerfilResponseDto on success`() = runBlocking {
         val client = createClient(
             json = """
                 {
@@ -68,14 +68,16 @@ class SteamRemoteDataSourceImplTest {
 
         val result = dataSource.fetchPerfil("76561198000000000")
         assertTrue(result.isSuccess)
-        val perfil = result.getOrThrow()
-        assertEquals("76561198000000000", perfil.steamId)
-        assertEquals("PlayerName", perfil.nombre)
-        assertEquals("http://avatar", perfil.avatarUrl)
+        val responseDto = result.getOrThrow()
+        assertEquals(1, responseDto.response.players.size)
+        val player = responseDto.response.players.first()
+        assertEquals("76561198000000000", player.steamid)
+        assertEquals("PlayerName", player.personaname)
+        assertEquals("http://avatar", player.avatarfull)
     }
 
     @Test
-    fun `fetchPerfil returns failure when no players`() = runBlocking {
+    fun `fetchPerfil returns empty players when no players`() = runBlocking {
         val client = createClient(
             json = """
                 {
@@ -88,9 +90,9 @@ class SteamRemoteDataSourceImplTest {
         val dataSource = SteamRemoteDataSourceImpl(client, apiKey, Dispatchers.Unconfined)
 
         val result = dataSource.fetchPerfil("nope")
-        assertTrue(result.isFailure)
-        val ex = result.exceptionOrNull()
-        assertTrue(ex is IllegalStateException)
+        assertTrue(result.isSuccess)
+        val responseDto = result.getOrThrow()
+        assertEquals(0, responseDto.response.players.size)
     }
 
     @Test
@@ -115,12 +117,13 @@ class SteamRemoteDataSourceImplTest {
 
         val result = dataSource.fetchBiblioteca("steamid")
         assertTrue(result.isSuccess)
-        val list = result.getOrThrow()
-        assertTrue(list.isEmpty())
+        val responseDto = result.getOrThrow()
+        val games = responseDto.response.games
+        assertTrue(games == null || games.isEmpty())
     }
 
     @Test
-    fun `fetchBiblioteca maps games correctly`() = runBlocking {
+    fun `fetchBiblioteca returns SteamBibliotecaResponseDto correctly`() = runBlocking {
         val client = createClient(
             json = """
                 {
@@ -142,19 +145,18 @@ class SteamRemoteDataSourceImplTest {
 
         val result = dataSource.fetchBiblioteca("steamid")
         assertTrue(result.isSuccess)
-        val list = result.getOrThrow()
-        assertEquals(1, list.size)
-        val juego = list[0]
-        assertEquals("570", juego.appId)
-        assertEquals("Dota 2", juego.nombre)
-        // 720 minutes -> 12.0 hours
-        assertEquals(12.0, juego.horasJugadas)
-        assertTrue(juego.iconUrl.contains("570"))
-        assertEquals(emptyList<String>(), juego.generos)
+        val responseDto = result.getOrThrow()
+        val games = responseDto.response.games
+        assertEquals(1, games?.size)
+        val game = games?.first()
+        assertEquals(570, game?.appid)
+        assertEquals("Dota 2", game?.name)
+        assertEquals(720, game?.playtime_forever)
+        assertEquals("iconpath", game?.img_icon_url)
     }
 
     @Test
-    fun `fetchLogros returns empty list when achievements null`() = runBlocking {
+    fun `fetchLogros returns SteamLogrosResponseDto with empty achievements`() = runBlocking {
         val client = createClient(
             json = """
                 {
@@ -175,12 +177,13 @@ class SteamRemoteDataSourceImplTest {
 
         val result = dataSource.fetchLogros("steamid", 570L)
         assertTrue(result.isSuccess)
-        val list = result.getOrThrow()
-        assertTrue(list.isEmpty())
+        val responseDto = result.getOrThrow()
+        val achievements = responseDto.playerstats.achievements
+        assertTrue(achievements == null || achievements.isEmpty())
     }
 
     @Test
-    fun `fetchLogros maps achievements correctly`() = runBlocking {
+    fun `fetchLogros returns SteamLogrosResponseDto with achievements`() = runBlocking {
         val client = createClient(
             json = """
                 {
@@ -201,12 +204,12 @@ class SteamRemoteDataSourceImplTest {
 
         val result = dataSource.fetchLogros("steamid", 570L)
         assertTrue(result.isSuccess)
-        val list = result.getOrThrow()
-        assertEquals(1, list.size)
-        val logro = list[0]
-        assertEquals("First Blood", logro.nombre)
-        assertEquals("Do something", logro.descripcion)
-        assertTrue(logro.conseguido)
+        val responseDto = result.getOrThrow()
+        val achievements = responseDto.playerstats.achievements
+        assertEquals(1, achievements?.size)
+        val achievement = achievements?.first()
+        assertEquals("First Blood", achievement?.name)
+        assertEquals("Do something", achievement?.description)
+        assertEquals(1, achievement?.achieved)
     }
 }
-

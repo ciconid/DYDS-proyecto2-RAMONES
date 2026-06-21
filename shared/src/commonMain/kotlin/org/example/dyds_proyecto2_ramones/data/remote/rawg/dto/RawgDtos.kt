@@ -1,4 +1,4 @@
-package org.example.dyds_proyecto2_ramones.data.remote.rawg
+package org.example.dyds_proyecto2_ramones.data.remote.rawg.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

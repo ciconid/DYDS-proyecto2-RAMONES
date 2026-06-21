@@ -5,7 +5,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.example.dyds_proyecto2_ramones.data.remote.steam.SteamRemoteDataSource
-import org.example.dyds_proyecto2_ramones.domain.model.Perfil
+import org.example.dyds_proyecto2_ramones.data.remote.steam.dto.SteamPerfilResponseDto
+import org.example.dyds_proyecto2_ramones.data.remote.steam.dto.SteamPlayerWrapperDto
+import org.example.dyds_proyecto2_ramones.data.remote.steam.dto.SteamPlayerSummaryDto
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -17,8 +19,13 @@ class PerfilRepositoryImplTest {
 
     @Test
     fun `getPerfil success`() = runBlocking {
-        val perfil = Perfil("7656119","Player","http://avatar")
-        coEvery { steamRemote.fetchPerfil("7656119") } returns Result.success(perfil)
+        val playerDto = SteamPlayerSummaryDto("7656119", "Player", "http://avatar")
+        val responseDto = SteamPerfilResponseDto(
+            response = SteamPlayerWrapperDto(
+                players = listOf(playerDto)
+            )
+        )
+        coEvery { steamRemote.fetchPerfil("7656119") } returns Result.success(responseDto)
 
         val result = repo.getPerfil("7656119")
         assertTrue(result.isSuccess)

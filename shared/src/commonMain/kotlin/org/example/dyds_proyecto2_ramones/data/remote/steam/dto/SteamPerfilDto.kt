@@ -1,4 +1,4 @@
-package org.example.dyds_proyecto2_ramones.data.remote.steam
+package org.example.dyds_proyecto2_ramones.data.remote.steam.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

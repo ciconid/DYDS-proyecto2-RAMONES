@@ -67,12 +67,12 @@ class RawgRemoteDataSourceImplTest {
 
         val result = dataSource.searchGamesByName("GameName")
         assertTrue(result.isSuccess)
-        val list = result.getOrThrow()
-        assertEquals(1, list.size)
-        val preview = list[0]
+        val responseDto = result.getOrThrow()
+        assertEquals(1, responseDto.results.size)
+        val preview = responseDto.results[0]
         assertEquals(123, preview.id)
         assertEquals("GameName", preview.name)
-        assertEquals("bg.jpg", preview.backgroundImage)
+        assertEquals("bg.jpg", preview.background_image)
     }
 
     @Test
@@ -99,10 +99,11 @@ class RawgRemoteDataSourceImplTest {
         val detail = result.getOrThrow()
         assertEquals(321, detail.id)
         assertEquals("GameDetail", detail.name)
-        assertEquals("A description", detail.description)
+        assertEquals("A description", detail.description_raw)
         assertEquals(85, detail.metacritic)
-        assertEquals(listOf("RPG"), detail.genres)
-        assertEquals("bg2.jpg", detail.backgroundImage)
+        assertEquals(1, detail.genres.size)
+        assertEquals("RPG", detail.genres[0].name)
+        assertEquals("bg2.jpg", detail.background_image)
     }
 
     @Test
@@ -124,8 +125,10 @@ class RawgRemoteDataSourceImplTest {
 
         val result = dataSource.getScreenshots(111)
         assertTrue(result.isSuccess)
-        val list = result.getOrThrow()
-        assertEquals(listOf("img1.jpg", "img2.jpg"), list)
+        val responseDto = result.getOrThrow()
+        assertEquals(2, responseDto.results.size)
+        assertEquals("img1.jpg", responseDto.results[0].image)
+        assertEquals("img2.jpg", responseDto.results[1].image)
     }
 }
 

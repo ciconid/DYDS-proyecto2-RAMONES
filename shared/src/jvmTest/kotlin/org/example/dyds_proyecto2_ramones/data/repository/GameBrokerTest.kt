@@ -4,8 +4,9 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.example.dyds_proyecto2_ramones.data.remote.rawg.RawgGamePreview
-import org.example.dyds_proyecto2_ramones.data.remote.rawg.RawgGameDetail
+import org.example.dyds_proyecto2_ramones.data.remote.rawg.dto.*
+import org.example.dyds_proyecto2_ramones.data.remote.steam.dto.SteamLogrosResponseDto
+import org.example.dyds_proyecto2_ramones.data.remote.steam.dto.SteamPlayerStatsDto
 import org.example.dyds_proyecto2_ramones.domain.model.Juego
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,12 +21,33 @@ class GameBrokerTest {
     @Test
     fun `buildDetalle uses rawg when available and steam logros`() = runBlocking {
         val juego = Juego("570", "Dota 2", 12.0, "", emptyList())
+        val mockSearchResponse = RawgSearchResponseDto(
+            results = listOf(
+                RawgGameDto(id = 570, name = "Dota 2", metacritic = 90, background_image = "bg.jpg", genres = listOf(RawgGenreDto("Action")))
+            )
+        )
+        coEvery { rawgRemote.searchGamesByName("Dota 2") } returns Result.success(mockSearchResponse)
+        val mockDetalleDto = RawgDetalleDto(
+            id = 570,
+            name = "Dota 2",
+            description_raw = "desc",
+            metacritic = 90,
+            background_image = "bg.jpg",
+            genres = listOf(RawgGenreDto("Action"))
+        )
+        coEvery { rawgRemote.getGameDetail(570) } returns Result.success(mockDetalleDto)
+        val mockScreenshotsResponse = RawgScreenshotsResponseDto(
+            results = listOf(
+                RawgScreenshotDto("s1.jpg"),
+                RawgScreenshotDto("s2.jpg")
+            )
+        )
+        coEvery { rawgRemote.getScreenshots(570) } returns Result.success(mockScreenshotsResponse)
 
-        coEvery { rawgRemote.searchGamesByName("Dota 2") } returns Result.success(listOf(RawgGamePreview(570, "Dota 2", "bg.jpg")))
-        coEvery { rawgRemote.getGameDetail(570) } returns Result.success(RawgGameDetail(570, "Dota 2", "desc", 90, listOf("Action"), "bg.jpg"))
-        coEvery { rawgRemote.getScreenshots(570) } returns Result.success(listOf("s1.jpg", "s2.jpg"))
-
-        coEvery { steamRemote.fetchLogros(any(), 570L) } returns Result.success(emptyList())
+        val mockLogrosResponseDto = SteamLogrosResponseDto(
+            playerstats = SteamPlayerStatsDto(achievements = null)
+        )
+        coEvery { steamRemote.fetchLogros(any(), 570L) } returns Result.success(mockLogrosResponseDto)
 
         val result = broker.buildDetalle("steamId", juego)
         assertTrue(result.isSuccess)
@@ -39,8 +61,11 @@ class GameBrokerTest {
     @Test
     fun `buildDetalle falls back when rawg not found`() = runBlocking {
         val juego = Juego("570", "Unknown Game", 1.0, "", emptyList())
-        coEvery { rawgRemote.searchGamesByName(any()) } returns Result.success(emptyList())
-        coEvery { steamRemote.fetchLogros(any(), 570L) } returns Result.success(emptyList())
+        coEvery { rawgRemote.searchGamesByName(any()) } returns Result.success(RawgSearchResponseDto(results = emptyList()))
+        val mockLogrosResponseDto = SteamLogrosResponseDto(
+            playerstats = SteamPlayerStatsDto(achievements = null)
+        )
+        coEvery { steamRemote.fetchLogros(any(), 570L) } returns Result.success(mockLogrosResponseDto)
 
         val result = broker.buildDetalle("steamId", juego)
         assertTrue(result.isSuccess)
@@ -50,4 +75,3 @@ class GameBrokerTest {
         assertEquals(emptyList<String>(), detalle.screenshots)
     }
 }
-

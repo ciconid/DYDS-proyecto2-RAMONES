@@ -5,7 +5,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.example.dyds_proyecto2_ramones.data.remote.steam.SteamRemoteDataSource
-import org.example.dyds_proyecto2_ramones.domain.model.Juego
+import org.example.dyds_proyecto2_ramones.data.remote.steam.dto.SteamBibliotecaResponseDto
+import org.example.dyds_proyecto2_ramones.data.remote.steam.dto.SteamBibliotecaWrapperDto
+import org.example.dyds_proyecto2_ramones.data.remote.steam.dto.SteamJuegoDto
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -17,8 +19,14 @@ class BibliotecaRepositoryImplTest {
 
     @Test
     fun `getBiblioteca returns list`() = runBlocking {
-        val juego = Juego("570","Dota 2",12.0,"icon", listOf("Action"))
-        coEvery { steamRemote.fetchBiblioteca("steamid") } returns Result.success(listOf(juego))
+        val juegoDto = SteamJuegoDto(570, "Dota 2", 720, "icon")
+        val responseDto = SteamBibliotecaResponseDto(
+            response = SteamBibliotecaWrapperDto(
+                games = listOf(juegoDto),
+                game_count = 1
+            )
+        )
+        coEvery { steamRemote.fetchBiblioteca("steamid") } returns Result.success(responseDto)
 
         val result = repo.getBiblioteca("steamid")
         assertTrue(result.isSuccess)
@@ -29,7 +37,13 @@ class BibliotecaRepositoryImplTest {
 
     @Test
     fun `getBiblioteca returns empty list`() = runBlocking {
-        coEvery { steamRemote.fetchBiblioteca("steamid") } returns Result.success(emptyList())
+        val responseDto = SteamBibliotecaResponseDto(
+            response = SteamBibliotecaWrapperDto(
+                games = null,
+                game_count = 0
+            )
+        )
+        coEvery { steamRemote.fetchBiblioteca("steamid") } returns Result.success(responseDto)
 
         val result = repo.getBiblioteca("steamid")
         assertTrue(result.isSuccess)
