@@ -7,11 +7,13 @@ import org.example.dyds_proyecto2_ramones.domain.usecase.AgregarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.FiltrarPorGeneroUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetBibliotecaUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.GetDetalleUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetPerfilUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.OrdenarPorHorasUseCase
 
 val useCaseModule = module {
     singleOf(::GetBibliotecaUseCase)
+    singleOf(::GetDetalleUseCase)
     singleOf(::GetPerfilUseCase)
     singleOf(::GetFavoritosUseCase)
     singleOf(::AgregarFavoritoUseCase)

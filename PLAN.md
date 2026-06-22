@@ -293,15 +293,15 @@ sealed class UiState<out T> {
 - ✅ `[C]` `BusquedaViewModelTest` — happy path, SteamID vacío, error de red
 
 **BibliotecaScreen:**
-- [ ] `[C]` `BibliotecaViewModel` — carga lista, expone estado filtrado/ordenado; llama `GetBibliotecaUseCase`, `FiltrarPorGeneroUseCase`, `OrdenarPorHorasUseCase`
-- [ ] `[C]` `BibliotecaScreen` — LazyColumn con chips de género y botón de orden; cada item navega a Detalle; estado vacío
-- [ ] `[C]` `BibliotecaViewModelTest` — lista completa, filtro por género, ordenamiento por horas, lista vacía
+- ✅ `[C]` `BibliotecaViewModel` — carga lista, expone estado filtrado/ordenado; llama `GetBibliotecaUseCase`, `FiltrarPorGeneroUseCase`, `OrdenarPorHorasUseCase`
+- ✅ `[C]` `BibliotecaScreen` — LazyColumn con chips de género y botón de orden; cada item navega a Detalle; estado vacío
+- ✅ `[C]` `BibliotecaViewModelTest` — lista completa, filtro por género, ordenamiento por horas, lista vacía
 
 **DetalleScreen:**
-- [ ] `[C]` `DetalleViewModel` — llama `GetDetalleUseCase`; expone `DetalleJuego` + `esFavorito: StateFlow<Boolean>`
-- [ ] `[C]` `DetalleScreen` — nombre, horas, descripción, Metacritic score, screenshots (HorizontalPager), logros, botón toggle favorito
-- [ ] `[C]` Manejo de error si RAWG no encuentra el juego (mostrar solo datos de Steam)
-- [ ] `[C]` `DetalleViewModelTest` — detalle completo, fallback sin RAWG, toggle favorito
+- ✅ `[C]` `DetalleViewModel` — llama `GetDetalleUseCase`; expone `DetalleJuego` + `esFavorito: StateFlow<Boolean>`
+- ✅ `[C]` `DetalleScreen` — nombre, horas, descripción, Metacritic score, screenshots (HorizontalPager), logros, botón toggle favorito
+- ✅ `[C]` Manejo de error si RAWG no encuentra el juego (mostrar solo datos de Steam)
+- ✅ `[C]` `DetalleViewModelTest` — detalle completo, fallback sin RAWG, toggle favorito
 
 **FavoritosScreen:**
 - [ ] `[C]` `FavoritosViewModel` — colecta `Flow` de `GetFavoritosUseCase`

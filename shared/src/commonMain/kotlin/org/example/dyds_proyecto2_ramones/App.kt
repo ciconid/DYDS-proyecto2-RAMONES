@@ -21,10 +21,12 @@ import org.example.dyds_proyecto2_ramones.presentation.busqueda.BusquedaViewMode
 import org.example.dyds_proyecto2_ramones.presentation.common.NavigationRail
 import org.example.dyds_proyecto2_ramones.presentation.common.Screen
 import org.example.dyds_proyecto2_ramones.presentation.detalle.DetalleScreen
+import org.example.dyds_proyecto2_ramones.presentation.detalle.DetalleViewModel
 import org.example.dyds_proyecto2_ramones.presentation.favoritos.FavoritosScreen
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetFavoritosUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.AgregarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.GetDetalleUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetPerfilUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetBibliotecaUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.FiltrarPorGeneroUseCase
@@ -42,6 +44,7 @@ fun App() {
 
         val getPerfilUseCase: GetPerfilUseCase by inject(GetPerfilUseCase::class.java)
         val getBibliotecaUseCase: GetBibliotecaUseCase by inject(GetBibliotecaUseCase::class.java)
+        val getDetalleUseCase: GetDetalleUseCase by inject(GetDetalleUseCase::class.java)
         val filtrarPorGeneroUseCase: FiltrarPorGeneroUseCase by inject(FiltrarPorGeneroUseCase::class.java)
         val ordenarPorHorasUseCase: OrdenarPorHorasUseCase by inject(OrdenarPorHorasUseCase::class.java)
         val getFavoritosUseCase: GetFavoritosUseCase by inject(GetFavoritosUseCase::class.java)
@@ -50,6 +53,9 @@ fun App() {
         val busquedaViewModel = remember(getPerfilUseCase) { BusquedaViewModel(getPerfilUseCase) }
         val bibliotecaViewModel = remember(getBibliotecaUseCase, filtrarPorGeneroUseCase, ordenarPorHorasUseCase) {
             BibliotecaViewModel(getBibliotecaUseCase, filtrarPorGeneroUseCase, ordenarPorHorasUseCase)
+        }
+        val detalleViewModel = remember(getDetalleUseCase, getFavoritosUseCase, agregarFavoritoUseCase, eliminarFavoritoUseCase) {
+            DetalleViewModel(getDetalleUseCase, getFavoritosUseCase, agregarFavoritoUseCase, eliminarFavoritoUseCase)
         }
 
         Row(
@@ -88,11 +94,10 @@ fun App() {
                     )
 
                     is Screen.Detalle -> DetalleScreen(
+                        steamId = selectedSteamId,
                         appId = (currentScreen as Screen.Detalle).appId,
-                        onNavigateFavoritos = { currentScreen = Screen.Favoritos },
                         onNavigateBack = { currentScreen = Screen.Biblioteca },
-                        agregarFavoritoUseCase = agregarFavoritoUseCase,
-                        eliminarFavoritoUseCase = eliminarFavoritoUseCase,
+                        viewModel = detalleViewModel,
                     )
 
                     is Screen.Favoritos -> FavoritosScreen(
