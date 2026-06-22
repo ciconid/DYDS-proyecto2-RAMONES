@@ -36,4 +36,9 @@ class BusquedaViewModel(
         val steamId = lastSteamId ?: return
         buscarPerfil(steamId)
     }
+
+    @Suppress("unused")
+    fun limpiarResultado() {
+        _uiState.value = UiState.Idle
+    }
 }

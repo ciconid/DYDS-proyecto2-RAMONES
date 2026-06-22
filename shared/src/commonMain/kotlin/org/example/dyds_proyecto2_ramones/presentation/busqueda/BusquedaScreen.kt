@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.example.dyds_proyecto2_ramones.presentation.busqueda
 
 import androidx.compose.foundation.BorderStroke
@@ -45,7 +47,6 @@ import org.example.dyds_proyecto2_ramones.presentation.common.UiState
 @Composable
 fun BusquedaScreen(
     onNavigateBiblioteca: (String) -> Unit,
-    onNavigateFavoritos: () -> Unit,
     viewModel: BusquedaViewModel,
 ) {
     val bgBase = Color(0xFF0E1117)
@@ -58,16 +59,13 @@ fun BusquedaScreen(
 
     val scope = rememberCoroutineScope()
     var steamIdInput by remember { mutableStateOf("") }
-    var lastNavigatedSteamId by remember { mutableStateOf<String?>(null) }
 
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState) {
         val successState = uiState as? UiState.Success ?: return@LaunchedEffect
-        if (lastNavigatedSteamId == successState.data.steamId) return@LaunchedEffect
-
-        lastNavigatedSteamId = successState.data.steamId
         onNavigateBiblioteca(successState.data.steamId)
+        viewModel.limpiarResultado()
     }
 
     fun onSearch() {

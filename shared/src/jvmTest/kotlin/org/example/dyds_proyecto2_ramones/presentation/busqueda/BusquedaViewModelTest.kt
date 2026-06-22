@@ -11,6 +11,7 @@ import org.example.dyds_proyecto2_ramones.presentation.common.UiState
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 class BusquedaViewModelTest {
 
@@ -57,6 +58,22 @@ class BusquedaViewModelTest {
         assertIs<UiState.Error>(state)
         assertEquals("Error de red", state.message)
         coVerify(exactly = 1) { perfilRepository.getPerfil(steamId) }
+    }
+
+    @Test
+    fun `limpiar resultado vuelve el estado a idle`() = runBlocking {
+        val steamId = "76561198000000000"
+        val perfil = Perfil(
+            steamId = steamId,
+            nombre = "Usuario Test",
+            avatarUrl = "https://avatar.test/1.png",
+        )
+        coEvery { perfilRepository.getPerfil(steamId) } returns Result.success(perfil)
+
+        viewModel.buscarPerfil(steamId)
+        viewModel.limpiarResultado()
+
+        assertTrue(viewModel.uiState.value is UiState.Idle)
     }
 }
 

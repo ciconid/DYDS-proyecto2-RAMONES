@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,8 +41,19 @@ fun App() {
         val bgBase = Color(0xFF0E1117)
 
         var currentScreen by remember { mutableStateOf<Screen>(Screen.Busqueda) }
+        val navigationHistory = remember { mutableStateListOf<Screen>() }
         var railExpanded by remember { mutableStateOf(false) }
         var selectedSteamId by remember { mutableStateOf("") }
+
+        fun navigateTo(screen: Screen) {
+            if (screen == currentScreen) return
+            navigationHistory.add(currentScreen)
+            currentScreen = screen
+        }
+
+        fun goBack() {
+            currentScreen = navigationHistory.removeLastOrNull() ?: Screen.Busqueda
+        }
 
         val getPerfilUseCase: GetPerfilUseCase by inject(GetPerfilUseCase::class.java)
         val getBibliotecaUseCase: GetBibliotecaUseCase by inject(GetBibliotecaUseCase::class.java)
@@ -71,7 +83,7 @@ fun App() {
                 expanded = railExpanded,
                 onToggle = { railExpanded = !railExpanded },
                 currentScreen = currentScreen,
-                onNavigate = { currentScreen = it },
+                onNavigate = { navigateTo(it) },
             )
 
             Box(
@@ -83,30 +95,29 @@ fun App() {
                     is Screen.Busqueda -> BusquedaScreen(
                         onNavigateBiblioteca = { steamId ->
                             selectedSteamId = steamId
-                            currentScreen = Screen.Biblioteca
+                            navigateTo(Screen.Biblioteca)
                         },
-                        onNavigateFavoritos = { currentScreen = Screen.Favoritos },
                         viewModel = busquedaViewModel,
                     )
 
                     is Screen.Biblioteca -> BibliotecaScreen(
                         steamId = selectedSteamId,
-                        onNavigateDetalle = { appId -> currentScreen = Screen.Detalle(appId) },
-                        onNavigateFavoritos = { currentScreen = Screen.Favoritos },
-                        onNavigateBack = { currentScreen = Screen.Busqueda },
+                        onNavigateDetalle = { appId -> navigateTo(Screen.Detalle(appId)) },
+                        onNavigateFavoritos = { navigateTo(Screen.Favoritos) },
+                        onNavigateBack = { goBack() },
                         viewModel = bibliotecaViewModel,
                     )
 
                     is Screen.Detalle -> DetalleScreen(
                         steamId = selectedSteamId,
                         appId = (currentScreen as Screen.Detalle).appId,
-                        onNavigateBack = { currentScreen = Screen.Biblioteca },
+                        onNavigateBack = { goBack() },
                         viewModel = detalleViewModel,
                     )
 
                     is Screen.Favoritos -> FavoritosScreen(
-                        onNavigateDetalle = { appId -> currentScreen = Screen.Detalle(appId) },
-                        onNavigateBack = { currentScreen = Screen.Busqueda },
+                        onNavigateDetalle = { appId -> navigateTo(Screen.Detalle(appId)) },
+                        onNavigateBack = { goBack() },
                         viewModel = favoritosViewModel,
                     )
                 }

@@ -319,7 +319,7 @@ sealed class UiState<out T> {
 - [ ] No hay generos en la pantalla de biblioteca, aunque los obtenemos de Steam.
 - ✅ En la biblioteca no se muestra la imagen del juego
 - ✅ En Favoritos no se muestra la imagen del juego
-- [ ] Las horas de juego se muestran con muchos decimales (ej: 123.456789 horas)
+- ✅ Las horas de juego se muestran con muchos decimales (ej: 123.456789 horas)
 
 ### Etapa 6 — Pulido y entrega `[Todos]`
 **Objetivo:** dejar la app robusta y el repositorio listo para la presentación.
