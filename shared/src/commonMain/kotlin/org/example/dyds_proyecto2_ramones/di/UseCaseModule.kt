@@ -10,6 +10,7 @@ import org.example.dyds_proyecto2_ramones.domain.usecase.GetBibliotecaUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetDetalleUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetPerfilUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.OrdenarPorHorasUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.TranslateDescriptionUseCase
 
 val useCaseModule = module {
     singleOf(::GetBibliotecaUseCase)
@@ -20,6 +21,7 @@ val useCaseModule = module {
     singleOf(::EliminarFavoritoUseCase)
     singleOf(::FiltrarPorGeneroUseCase)
     singleOf(::OrdenarPorHorasUseCase)
+    singleOf(::TranslateDescriptionUseCase)
 }
 
 

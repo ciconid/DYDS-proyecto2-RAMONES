@@ -33,6 +33,7 @@ import org.example.dyds_proyecto2_ramones.domain.usecase.GetPerfilUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetBibliotecaUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.FiltrarPorGeneroUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.OrdenarPorHorasUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.TranslateDescriptionUseCase
 
 @Composable
 @Preview
@@ -63,12 +64,13 @@ fun App() {
         val getFavoritosUseCase: GetFavoritosUseCase by inject(GetFavoritosUseCase::class.java)
         val agregarFavoritoUseCase: AgregarFavoritoUseCase by inject(AgregarFavoritoUseCase::class.java)
         val eliminarFavoritoUseCase: EliminarFavoritoUseCase by inject(EliminarFavoritoUseCase::class.java)
+        val translateDescriptionUseCase: TranslateDescriptionUseCase by inject(TranslateDescriptionUseCase::class.java)
         val busquedaViewModel = remember(getPerfilUseCase) { BusquedaViewModel(getPerfilUseCase) }
         val bibliotecaViewModel = remember(getBibliotecaUseCase, filtrarPorGeneroUseCase, ordenarPorHorasUseCase) {
             BibliotecaViewModel(getBibliotecaUseCase, filtrarPorGeneroUseCase, ordenarPorHorasUseCase)
         }
-        val detalleViewModel = remember(getDetalleUseCase, getFavoritosUseCase, agregarFavoritoUseCase, eliminarFavoritoUseCase) {
-            DetalleViewModel(getDetalleUseCase, getFavoritosUseCase, agregarFavoritoUseCase, eliminarFavoritoUseCase)
+        val detalleViewModel = remember(getDetalleUseCase, getFavoritosUseCase, agregarFavoritoUseCase, eliminarFavoritoUseCase, translateDescriptionUseCase) {
+            DetalleViewModel(getDetalleUseCase, getFavoritosUseCase, agregarFavoritoUseCase, eliminarFavoritoUseCase, translateDescriptionUseCase)
         }
         val favoritosViewModel = remember(getFavoritosUseCase, eliminarFavoritoUseCase) {
             FavoritosViewModel(getFavoritosUseCase, eliminarFavoritoUseCase)

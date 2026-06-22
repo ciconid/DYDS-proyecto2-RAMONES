@@ -8,12 +8,14 @@ import kotlinx.coroutines.runBlocking
 import org.example.dyds_proyecto2_ramones.domain.model.DetalleJuego
 import org.example.dyds_proyecto2_ramones.domain.model.Juego
 import org.example.dyds_proyecto2_ramones.domain.model.Logro
+import org.example.dyds_proyecto2_ramones.data.remote.translation.TranslationRemoteDataSource
 import org.example.dyds_proyecto2_ramones.domain.repository.DetalleRepository
 import org.example.dyds_proyecto2_ramones.domain.repository.FavoritosRepository
 import org.example.dyds_proyecto2_ramones.domain.usecase.AgregarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetDetalleUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetFavoritosUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.TranslateDescriptionUseCase
 import org.example.dyds_proyecto2_ramones.presentation.common.UiState
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,17 +27,20 @@ class DetalleViewModelTest {
 
     private val detalleRepository: DetalleRepository = mockk()
     private val favoritosRepository: FavoritosRepository = mockk()
+    private val translationRemoteDataSource: TranslationRemoteDataSource = mockk()
 
     private val getDetalleUseCase = GetDetalleUseCase(detalleRepository)
     private val getFavoritosUseCase = GetFavoritosUseCase(favoritosRepository)
     private val agregarFavoritoUseCase = AgregarFavoritoUseCase(favoritosRepository)
     private val eliminarFavoritoUseCase = EliminarFavoritoUseCase(favoritosRepository)
+    private val translateDescriptionUseCase = TranslateDescriptionUseCase(translationRemoteDataSource)
 
     private fun createViewModel() = DetalleViewModel(
         getDetalleUseCase = getDetalleUseCase,
         getFavoritosUseCase = getFavoritosUseCase,
         agregarFavoritoUseCase = agregarFavoritoUseCase,
         eliminarFavoritoUseCase = eliminarFavoritoUseCase,
+        translateDescriptionUseCase = translateDescriptionUseCase,
     )
 
     @Test
@@ -47,13 +52,16 @@ class DetalleViewModelTest {
         )
         coEvery { detalleRepository.getDetalle("steam-1", "730") } returns Result.success(detalle)
         coEvery { favoritosRepository.getFavoritos() } returns flowOf(emptyList())
+        coEvery { translationRemoteDataSource.translateToSpanish(any()) } returns Result.success("Descripcion completa")
 
         val viewModel = createViewModel()
         viewModel.cargarDetalle("steam-1", "730")
+        viewModel.traducirDescripcionActual()
 
         val state = viewModel.uiState.value
         assertIs<UiState.Success<DetalleJuego>>(state)
         assertEquals("Descripcion completa", state.data.descripcion)
+        assertEquals("Descripcion completa", viewModel.descripcionTraducida.value)
         assertEquals(91, state.data.metacriticScore)
         assertEquals(listOf("s1.png"), state.data.screenshots)
         assertFalse(viewModel.esFavorito.value)
@@ -68,6 +76,7 @@ class DetalleViewModelTest {
         )
         coEvery { detalleRepository.getDetalle("steam-1", "730") } returns Result.success(detalle)
         coEvery { favoritosRepository.getFavoritos() } returns flowOf(emptyList())
+        coEvery { translationRemoteDataSource.translateToSpanish(any()) } returns Result.success("Texto")
 
         val viewModel = createViewModel()
         viewModel.cargarDetalle("steam-1", "730")
@@ -91,6 +100,7 @@ class DetalleViewModelTest {
 
         coEvery { detalleRepository.getDetalle("steam-1", "730") } returns Result.success(detalle)
         coEvery { favoritosRepository.getFavoritos() } answers { flowOf(favoritos.toList()) }
+        coEvery { translationRemoteDataSource.translateToSpanish(any()) } returns Result.success("Descripcion")
         coEvery { favoritosRepository.agregar(any()) } answers {
             favoritos.add(firstArg<DetalleJuego>().juego)
         }
@@ -123,6 +133,7 @@ class DetalleViewModelTest {
         )
         coEvery { detalleRepository.getDetalle("", "730") } returns Result.success(detalleLocal)
         coEvery { favoritosRepository.getFavoritos() } returns flowOf(listOf(detalleLocal.juego))
+        coEvery { translationRemoteDataSource.translateToSpanish(any()) } returns Result.success("Descripcion local favorita")
         coEvery { favoritosRepository.getDetalleLocal(any()) } returns detalleLocal
 
         val viewModel = createViewModel()

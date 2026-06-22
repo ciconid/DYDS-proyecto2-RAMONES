@@ -9,6 +9,7 @@ import org.example.dyds_proyecto2_ramones.domain.usecase.AgregarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetDetalleUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetFavoritosUseCase
+import org.example.dyds_proyecto2_ramones.domain.usecase.TranslateDescriptionUseCase
 import org.example.dyds_proyecto2_ramones.presentation.common.UiState
 
 class DetalleViewModel(
@@ -16,12 +17,16 @@ class DetalleViewModel(
     private val getFavoritosUseCase: GetFavoritosUseCase,
     private val agregarFavoritoUseCase: AgregarFavoritoUseCase,
     private val eliminarFavoritoUseCase: EliminarFavoritoUseCase,
+    private val translateDescriptionUseCase: TranslateDescriptionUseCase,
 ) {
     private val _uiState = MutableStateFlow<UiState<DetalleJuego>>(UiState.Idle)
     val uiState: StateFlow<UiState<DetalleJuego>> = _uiState.asStateFlow()
 
     private val _esFavorito = MutableStateFlow(false)
     val esFavorito: StateFlow<Boolean> = _esFavorito.asStateFlow()
+
+    private val _descripcionTraducida = MutableStateFlow<String?>(null)
+    val descripcionTraducida: StateFlow<String?> = _descripcionTraducida.asStateFlow()
 
     private var lastSteamId: String? = null
     private var lastAppId: String? = null
@@ -41,20 +46,22 @@ class DetalleViewModel(
         lastSteamId = steamId
         lastAppId = appId
         _uiState.value = UiState.Loading
+        _descripcionTraducida.value = null
 
         val result = getDetalleUseCase(steamId, appId)
-        _uiState.value = result.fold(
-            onSuccess = { detalle ->
-                detalleActual = detalle
-                actualizarFavorito(appId)
-                UiState.Success(detalle)
-            },
-            onFailure = { error ->
-                detalleActual = null
-                _esFavorito.value = false
-                UiState.Error(error.message ?: "No se pudo cargar el detalle")
-            },
-        )
+
+        result.onSuccess { detalle ->
+            detalleActual = detalle
+            actualizarFavorito(appId)
+            _uiState.value = UiState.Success(detalle)
+            // Traduccion en el VM para no depender de que la UI recuerde dispararla.
+            traducirDescripcionActual()
+        }.onFailure { error ->
+            detalleActual = null
+            _esFavorito.value = false
+            _descripcionTraducida.value = null
+            _uiState.value = UiState.Error(error.message ?: "No se pudo cargar el detalle")
+        }
     }
 
     suspend fun toggleFavorito() {
@@ -76,6 +83,22 @@ class DetalleViewModel(
         val steamId = lastSteamId ?: return
         val appId = lastAppId ?: return
         cargarDetalle(steamId, appId)
+        //traducirDescripcionActual()
+    }
+
+    suspend fun traducirDescripcionActual() {
+        val detalle = detalleActual ?: return
+        val descripcion = detalle.descripcion
+        if (descripcion.isBlank()) return
+        if (_descripcionTraducida.value != null) return
+
+        translateDescriptionUseCase(descripcion)
+            .onSuccess { traducida -> _descripcionTraducida.value = traducida }
+            .onFailure { error ->
+                println("❌ Traducción falló: ${error.message}")  // ← agregá esto
+                _descripcionTraducida.value = null
+            }
+            //.onFailure { _descripcionTraducida.value = null }
     }
 
     private suspend fun actualizarFavorito(appId: String) {

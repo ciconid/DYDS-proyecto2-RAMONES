@@ -46,7 +46,6 @@ import org.example.dyds_proyecto2_ramones.presentation.common.formatHoursOneDeci
 import org.example.dyds_proyecto2_ramones.presentation.common.GameIcon
 import org.example.dyds_proyecto2_ramones.presentation.common.UiState
 import coil3.compose.AsyncImage
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 
 @Composable
@@ -69,9 +68,11 @@ fun DetalleScreen(
     val scope = rememberCoroutineScope()
     val uiState by viewModel.uiState.collectAsState()
     val esFavorito by viewModel.esFavorito.collectAsState()
+    val descripcionTraducida by viewModel.descripcionTraducida.collectAsState()
 
     LaunchedEffect(steamId, appId) {
         viewModel.cargarDetalle(steamId, appId)
+        //viewModel.traducirDescripcionActual()
     }
 
     Column(
@@ -115,6 +116,7 @@ fun DetalleScreen(
                 DetalleContent(
                     detalle = state.data,
                     esFavorito = esFavorito,
+                    descripcionTraducida = descripcionTraducida,
                     bgSurface = bgSurface,
                     elevated = elevated,
                     accent = accent,
@@ -143,6 +145,7 @@ fun DetalleScreen(
 private fun DetalleContent(
     detalle: DetalleJuego,
     esFavorito: Boolean,
+    descripcionTraducida: String?,
     bgSurface: Color,
     elevated: Color,
     accent: Color,
@@ -376,7 +379,7 @@ private fun DetalleContent(
             fontWeight = FontWeight.Normal,
         )
         Text(
-            text = detalle.descripcion.ifBlank { "Sin descripcion disponible" },
+            text = descripcionTraducida ?: detalle.descripcion.ifBlank { "Sin descripcion disponible" },
             color = textMuted,
             fontSize = 13.sp,
             lineHeight = 22.sp,

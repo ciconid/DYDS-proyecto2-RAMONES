@@ -9,6 +9,8 @@ import org.example.dyds_proyecto2_ramones.data.remote.rawg.RawgRemoteDataSource
 import org.example.dyds_proyecto2_ramones.data.remote.rawg.RawgRemoteDataSourceImpl
 import org.example.dyds_proyecto2_ramones.data.remote.steam.SteamRemoteDataSource
 import org.example.dyds_proyecto2_ramones.data.remote.steam.SteamRemoteDataSourceImpl
+import org.example.dyds_proyecto2_ramones.data.remote.translation.TranslationRemoteDataSource
+import org.example.dyds_proyecto2_ramones.data.remote.translation.TranslationRemoteDataSourceImpl
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import kotlin.coroutines.CoroutineContext
@@ -23,6 +25,7 @@ val networkModule = module {
                 json(Json {
                     ignoreUnknownKeys = true
                     isLenient = true
+                    encodeDefaults = true
                 })
             }
         }
@@ -40,6 +43,13 @@ val networkModule = module {
         RawgRemoteDataSourceImpl(
             client = get<HttpClient>(),
             apiKey = BuildKonfig.RAWG_KEY,
+            ioDispatcher = get(named("io"))
+        )
+    }
+
+    single<TranslationRemoteDataSource> {
+        TranslationRemoteDataSourceImpl(
+//            client = get<HttpClient>(),
             ioDispatcher = get(named("io"))
         )
     }
