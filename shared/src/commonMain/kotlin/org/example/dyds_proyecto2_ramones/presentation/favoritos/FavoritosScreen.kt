@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import org.example.dyds_proyecto2_ramones.presentation.common.formatHoursOneDecimal
 import org.example.dyds_proyecto2_ramones.presentation.common.GameIcon
 
 @Composable
@@ -173,7 +174,7 @@ fun FavoritosScreen(
                                 fontWeight = FontWeight.Medium,
                             )
                             Text(
-                                text = "${juego.generos.firstOrNull() ?: "Sin genero"} • ${juego.horasJugadas} h",
+                                text = "${juego.generos.firstOrNull() ?: "Sin genero"} • ${juego.horasJugadas.formatHoursOneDecimal()} h",
                                 color = textMuted,
                                 fontSize = 12.sp,
                             )

@@ -42,6 +42,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.launch
 import org.example.dyds_proyecto2_ramones.domain.model.DetalleJuego
+import org.example.dyds_proyecto2_ramones.presentation.common.formatHoursOneDecimal
 import org.example.dyds_proyecto2_ramones.presentation.common.GameIcon
 import org.example.dyds_proyecto2_ramones.presentation.common.UiState
 
@@ -232,7 +233,7 @@ private fun DetalleContent(
         StatCard(
             modifier = Modifier.weight(1f),
             label = "HORAS",
-            value = "${detalle.juego.horasJugadas.toInt()}h",
+            value = "${detalle.juego.horasJugadas.formatHoursOneDecimal()}h",
             valueColor = textPrim,
             bgSurface = bgSurface,
             border = border,

@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import org.example.dyds_proyecto2_ramones.presentation.common.formatHoursOneDecimal
 import org.example.dyds_proyecto2_ramones.presentation.common.GameIcon
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -222,7 +223,7 @@ fun BibliotecaScreen(
                         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Text(game.nombre, color = textPrim, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                             Text(
-                                text = "${game.generos.firstOrNull() ?: "Sin genero"} • ${game.horasJugadas} h",
+                                text = "${game.generos.firstOrNull() ?: "Sin genero"} • ${game.horasJugadas.formatHoursOneDecimal()} h",
                                 color = textMuted,
                                 fontSize = 12.sp,
                             )
