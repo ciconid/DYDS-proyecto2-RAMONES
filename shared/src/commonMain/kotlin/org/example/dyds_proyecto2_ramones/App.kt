@@ -102,21 +102,24 @@ fun App() {
 
                     is Screen.Biblioteca -> BibliotecaScreen(
                         steamId = selectedSteamId,
-                        onNavigateDetalle = { appId -> navigateTo(Screen.Detalle(appId)) },
+                        onNavigateDetalle = { appId -> navigateTo(Screen.Detalle(appId, fromFavoritos = false)) },
                         onNavigateFavoritos = { navigateTo(Screen.Favoritos) },
                         onNavigateBack = { goBack() },
                         viewModel = bibliotecaViewModel,
                     )
 
-                    is Screen.Detalle -> DetalleScreen(
-                        steamId = selectedSteamId,
-                        appId = (currentScreen as Screen.Detalle).appId,
-                        onNavigateBack = { goBack() },
-                        viewModel = detalleViewModel,
-                    )
+                    is Screen.Detalle -> {
+                        val detalleScreen = currentScreen as Screen.Detalle
+                        DetalleScreen(
+                            steamId = if (detalleScreen.fromFavoritos) "" else selectedSteamId,
+                            appId = detalleScreen.appId,
+                            onNavigateBack = { goBack() },
+                            viewModel = detalleViewModel,
+                        )
+                    }
 
                     is Screen.Favoritos -> FavoritosScreen(
-                        onNavigateDetalle = { appId -> navigateTo(Screen.Detalle(appId)) },
+                        onNavigateDetalle = { appId -> navigateTo(Screen.Detalle(appId, fromFavoritos = true)) },
                         onNavigateBack = { goBack() },
                         viewModel = favoritosViewModel,
                     )

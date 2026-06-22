@@ -92,12 +92,13 @@ class DetalleViewModelTest {
         coEvery { detalleRepository.getDetalle("steam-1", "730") } returns Result.success(detalle)
         coEvery { favoritosRepository.getFavoritos() } answers { flowOf(favoritos.toList()) }
         coEvery { favoritosRepository.agregar(any()) } answers {
-            favoritos.add(firstArg())
+            favoritos.add(firstArg<DetalleJuego>().juego)
         }
         coEvery { favoritosRepository.eliminar(any()) } answers {
             val appId = firstArg<String>()
             favoritos.removeAll { it.appId == appId }
         }
+        coEvery { favoritosRepository.getDetalleLocal(any()) } returns null
 
         val viewModel = createViewModel()
         viewModel.cargarDetalle("steam-1", "730")
@@ -111,6 +112,26 @@ class DetalleViewModelTest {
 
         coVerify(exactly = 1) { favoritosRepository.agregar(any()) }
         coVerify(exactly = 1) { favoritosRepository.eliminar("730") }
+    }
+
+    @Test
+    fun `detalle local desde favoritos funciona sin steamId`() = runBlocking {
+        val detalleLocal = sampleDetalle(
+            descripcion = "Descripcion local favorita",
+            metacritic = null,
+            screenshots = emptyList(),
+        )
+        coEvery { detalleRepository.getDetalle("", "730") } returns Result.success(detalleLocal)
+        coEvery { favoritosRepository.getFavoritos() } returns flowOf(listOf(detalleLocal.juego))
+        coEvery { favoritosRepository.getDetalleLocal(any()) } returns detalleLocal
+
+        val viewModel = createViewModel()
+        viewModel.cargarDetalle("", "730")
+
+        val state = viewModel.uiState.value
+        assertIs<UiState.Success<DetalleJuego>>(state)
+        assertEquals("Descripcion local favorita", state.data.descripcion)
+        assertTrue(viewModel.esFavorito.value)
     }
 
     private fun sampleDetalle(
@@ -140,4 +161,3 @@ class DetalleViewModelTest {
         )
     }
 }
-

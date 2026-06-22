@@ -28,7 +28,7 @@ import androidx.compose.ui.geometry.Offset
 sealed class Screen {
     object Busqueda : Screen()
     object Biblioteca : Screen()
-    data class Detalle(val appId: String) : Screen()
+    data class Detalle(val appId: String, val fromFavoritos: Boolean = false) : Screen()
     object Favoritos : Screen()
 }
 
@@ -190,6 +190,5 @@ private fun HeartIcon(tint: Color) {
         drawLine(tint, Offset(size.width * 0.85f, size.height * 0.42f), Offset(size.width * 0.5f, size.height * 0.8f), strokeWidth = 1.6f)
     }
 }
-
 
 

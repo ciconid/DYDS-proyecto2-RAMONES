@@ -12,5 +12,33 @@ actual fun createSqlDriver(): SqlDriver = JdbcSqliteDriver("jdbc:sqlite:favorito
                 throw throwable
             }
         }
+    ensureFavoritosColumns(driver)
 }
 
+private fun ensureFavoritosColumns(driver: SqlDriver) {
+    runCatching {
+        driver.execute(
+            identifier = null,
+            sql = "ALTER TABLE favorito ADD COLUMN descripcion TEXT NOT NULL DEFAULT ''",
+            parameters = 0,
+        )
+    }.onFailure { throwable ->
+        val duplicateColumn = throwable.message?.contains("duplicate column", ignoreCase = true) == true
+        if (!duplicateColumn) {
+            throw throwable
+        }
+    }
+
+    runCatching {
+        driver.execute(
+            identifier = null,
+            sql = "ALTER TABLE favorito ADD COLUMN generos TEXT NOT NULL DEFAULT ''",
+            parameters = 0,
+        )
+    }.onFailure { throwable ->
+        val duplicateColumn = throwable.message?.contains("duplicate column", ignoreCase = true) == true
+        if (!duplicateColumn) {
+            throw throwable
+        }
+    }
+}

@@ -1,5 +1,6 @@
 package org.example.dyds_proyecto2_ramones.data.local.entity
 
+import org.example.dyds_proyecto2_ramones.domain.model.DetalleJuego
 import org.example.dyds_proyecto2_ramones.domain.model.Juego
 
 data class FavoritoEntity(
@@ -7,6 +8,8 @@ data class FavoritoEntity(
     val nombre: String,
     val iconUrl: String?,
     val horasJugadas: Double?,
+    val descripcion: String,
+    val generos: String,
 )
 
 fun FavoritoEntity.toDomain(): Juego = Juego(
@@ -14,12 +17,23 @@ fun FavoritoEntity.toDomain(): Juego = Juego(
     nombre = nombre,
     horasJugadas = horasJugadas ?: 0.0,
     iconUrl = iconUrl ?: "",
-    generos = emptyList(),
+    generos = generos.toGenerosList(),
 )
 
-fun Juego.toEntity(): FavoritoEntity = FavoritoEntity(
-    appId = appId,
-    nombre = nombre,
-    iconUrl = iconUrl.takeIf { it.isNotBlank() },
-    horasJugadas = horasJugadas,
+fun FavoritoEntity.toDetalleLocal(): DetalleJuego = DetalleJuego(
+    juego = toDomain(),
+    descripcion = descripcion.ifBlank { "Sin descripcion disponible" },
+    metacriticScore = null,
+    screenshots = emptyList(),
+    logros = emptyList(),
 )
+
+private fun String.toGenerosList(): List<String> =
+    split("|")
+        .map { it.trim() }
+        .filter { it.isNotBlank() }
+
+fun List<String>.toGeneroStorage(): String =
+    map { it.trim() }
+        .filter { it.isNotBlank() }
+        .joinToString(separator = "|")

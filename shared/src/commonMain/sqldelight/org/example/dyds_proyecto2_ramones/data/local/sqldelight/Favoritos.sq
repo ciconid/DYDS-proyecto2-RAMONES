@@ -2,15 +2,23 @@ CREATE TABLE favorito (
   appId TEXT NOT NULL PRIMARY KEY,
   nombre TEXT NOT NULL,
   iconUrl TEXT,
-  horasJugadas REAL
+  horasJugadas REAL,
+  descripcion TEXT NOT NULL DEFAULT '',
+  generos TEXT NOT NULL DEFAULT ''
 );
 
 insertFavorito:
-INSERT OR REPLACE INTO favorito(appId, nombre, iconUrl, horasJugadas)
-VALUES(?, ?, ?, ?);
+INSERT OR REPLACE INTO favorito(appId, nombre, iconUrl, horasJugadas, descripcion, generos)
+VALUES(?, ?, ?, ?, ?, ?);
 
 deleteFavorito:
 DELETE FROM favorito WHERE appId = ?;
 
 selectAllFavoritos:
-SELECT appId, nombre, iconUrl, horasJugadas FROM favorito ORDER BY nombre;
+SELECT appId, nombre, iconUrl, horasJugadas, descripcion, generos FROM favorito ORDER BY nombre;
+
+selectFavoritoByAppId:
+SELECT appId, nombre, iconUrl, horasJugadas, descripcion, generos
+FROM favorito
+WHERE appId = ?
+LIMIT 1;

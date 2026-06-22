@@ -31,11 +31,6 @@ class DetalleViewModel(
         val steamId = steamIdInput.trim()
         val appId = appIdInput.trim()
 
-        if (steamId.isBlank()) {
-            _uiState.value = UiState.Error("No se encontro SteamID para cargar el detalle")
-            return
-        }
-
         if (appId.isBlank()) {
             _uiState.value = UiState.Error("No se encontro appId para cargar el detalle")
             return
@@ -66,7 +61,7 @@ class DetalleViewModel(
             if (_esFavorito.value) {
                 eliminarFavoritoUseCase(detalle.juego.appId)
             } else {
-                agregarFavoritoUseCase(detalle.juego)
+                agregarFavoritoUseCase(detalle)
             }
         }.onSuccess {
             actualizarFavorito(detalle.juego.appId)
@@ -86,4 +81,3 @@ class DetalleViewModel(
         _esFavorito.value = favoritos.any { it.appId == appId }
     }
 }
-
