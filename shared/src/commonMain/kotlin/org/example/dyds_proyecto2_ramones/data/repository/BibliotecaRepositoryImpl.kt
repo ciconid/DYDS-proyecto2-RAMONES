@@ -9,6 +9,7 @@ import kotlin.coroutines.CoroutineContext
 
 class BibliotecaRepositoryImpl(
     private val steamRemote: SteamRemoteDataSource,
+    private val gameBroker: GameBroker,
     private val ioDispatcher: CoroutineContext
 ) : BibliotecaRepository {
 
@@ -17,7 +18,8 @@ class BibliotecaRepositoryImpl(
             runCatching {
                 val responseDto = steamRemote.fetchBiblioteca(steamId).getOrThrow()
                 val games = responseDto.response.games ?: emptyList()
-                games.map { it.toDomain() }
+                val juegos = games.map { it.toDomain() }
+                gameBroker.enrichBibliotecaGeneros(juegos)
             }
         }
 }

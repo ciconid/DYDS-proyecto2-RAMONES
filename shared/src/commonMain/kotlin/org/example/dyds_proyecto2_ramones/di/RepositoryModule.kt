@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
     single<PerfilRepository> { PerfilRepositoryImpl(get(), get(named("io"))) }
-    single<BibliotecaRepository> { BibliotecaRepositoryImpl(get(), get(named("io"))) }
     single { GameBroker(get(), get(), get(named("io"))) }
+    single<BibliotecaRepository> { BibliotecaRepositoryImpl(get(), get(), get(named("io"))) }
     single<DetalleRepository> { DetalleRepositoryImpl(get(), get(), get(), get(named("io"))) }
 }

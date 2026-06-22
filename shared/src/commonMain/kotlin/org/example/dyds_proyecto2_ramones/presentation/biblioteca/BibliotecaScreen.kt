@@ -221,9 +221,10 @@ fun BibliotecaScreen(
                         }
 
                         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            val generosTexto = game.generos.ifEmpty { listOf("Sin genero") }.joinToString(", ")
                             Text(game.nombre, color = textPrim, fontSize = 13.sp, fontWeight = FontWeight.Medium)
                             Text(
-                                text = "${game.generos.firstOrNull() ?: "Sin genero"} • ${game.horasJugadas.formatHoursOneDecimal()} h",
+                                text = "$generosTexto • ${game.horasJugadas.formatHoursOneDecimal()} h",
                                 color = textMuted,
                                 fontSize = 12.sp,
                             )

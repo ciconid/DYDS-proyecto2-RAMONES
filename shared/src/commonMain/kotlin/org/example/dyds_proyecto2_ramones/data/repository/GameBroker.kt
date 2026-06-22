@@ -17,6 +17,14 @@ class GameBroker(
     private val ioDispatcher: CoroutineContext
 ) {
 
+    suspend fun enrichBibliotecaGeneros(juegos: List<Juego>): List<Juego> =
+        withContext(ioDispatcher) {
+            juegos.map { juego ->
+                val generos = fetchGenresFromRawg(juego.nombre)
+                if (generos.isEmpty()) juego else juego.copy(generos = generos)
+            }
+        }
+
     suspend fun buildDetalle(steamId: String, juego: Juego): Result<DetalleJuego> =
         withContext(ioDispatcher) {
             runCatching {
@@ -24,9 +32,10 @@ class GameBroker(
                 val screenshots = rawgDetail?.let { fetchScreenshots(it.id) } ?: emptyList()
                 val logros = fetchLogrosFromSteam(steamId, juego.appId)
                 val datosExtra = rawgDetail?.toDatosExtra()
+                val juegoConGeneros = if (datosExtra?.generos.isNullOrEmpty()) juego else juego.copy(generos = datosExtra.generos)
 
                 DetalleJuego(
-                    juego = juego,
+                    juego = juegoConGeneros,
                     descripcion = datosExtra?.descripcion.orEmpty(),
                     metacriticScore = datosExtra?.metacriticScore,
                     screenshots = screenshots,
@@ -34,6 +43,14 @@ class GameBroker(
                 )
             }
         }
+
+    private suspend fun fetchGenresFromRawg(gameName: String): List<String> {
+        val searchResult = rawgRemote.searchGamesByName(gameName).getOrNull() ?: return emptyList()
+        val match = searchResult.results.firstOrNull { it.name.equals(gameName, ignoreCase = true) }
+            ?: searchResult.results.firstOrNull()
+            ?: return emptyList()
+        return match.genres.map { it.name }.filter { it.isNotBlank() }.distinctBy { it.lowercase() }
+    }
 
     private suspend fun searchRawgDetail(gameName: String): RawgDetalleDto? {
         val searchResult = rawgRemote.searchGamesByName(gameName).getOrNull() ?: return null

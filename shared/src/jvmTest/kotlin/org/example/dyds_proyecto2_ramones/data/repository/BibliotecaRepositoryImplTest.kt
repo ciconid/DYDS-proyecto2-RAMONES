@@ -15,7 +15,8 @@ import kotlin.test.assertTrue
 class BibliotecaRepositoryImplTest {
 
     private val steamRemote: SteamRemoteDataSource = mockk()
-    private val repo = BibliotecaRepositoryImpl(steamRemote, Dispatchers.Unconfined)
+    private val gameBroker: GameBroker = mockk()
+    private val repo = BibliotecaRepositoryImpl(steamRemote, gameBroker, Dispatchers.Unconfined)
 
     @Test
     fun `getBiblioteca returns list`() = runBlocking {
@@ -27,6 +28,7 @@ class BibliotecaRepositoryImplTest {
             )
         )
         coEvery { steamRemote.fetchBiblioteca("steamid") } returns Result.success(responseDto)
+        coEvery { gameBroker.enrichBibliotecaGeneros(any()) } answers { firstArg() }
 
         val result = repo.getBiblioteca("steamid")
         assertTrue(result.isSuccess)
@@ -44,6 +46,7 @@ class BibliotecaRepositoryImplTest {
             )
         )
         coEvery { steamRemote.fetchBiblioteca("steamid") } returns Result.success(responseDto)
+        coEvery { gameBroker.enrichBibliotecaGeneros(any()) } answers { firstArg() }
 
         val result = repo.getBiblioteca("steamid")
         assertTrue(result.isSuccess)
@@ -54,6 +57,7 @@ class BibliotecaRepositoryImplTest {
     @Test
     fun `getBiblioteca failure`() = runBlocking {
         coEvery { steamRemote.fetchBiblioteca("bad") } returns Result.failure(IllegalStateException("no"))
+        coEvery { gameBroker.enrichBibliotecaGeneros(any()) } answers { firstArg() }
 
         val result = repo.getBiblioteca("bad")
         assertTrue(result.isFailure)

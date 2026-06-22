@@ -52,7 +52,7 @@ class GameBrokerTest {
         val result = broker.buildDetalle("steamId", juego)
         assertTrue(result.isSuccess)
         val detalle = result.getOrThrow()
-        assertEquals(juego, detalle.juego)
+        assertEquals(listOf("Action"), detalle.juego.generos)
         assertEquals("desc", detalle.descripcion)
         assertEquals(90, detalle.metacriticScore)
         assertEquals(listOf("s1.jpg", "s2.jpg"), detalle.screenshots)
@@ -73,5 +73,26 @@ class GameBrokerTest {
         assertEquals("", detalle.descripcion)
         assertEquals(null, detalle.metacriticScore)
         assertEquals(emptyList<String>(), detalle.screenshots)
+    }
+
+    @Test
+    fun `enrichBibliotecaGeneros uses rawg genres when available`() = runBlocking {
+        val juego = Juego("10", "Counter-Strike", 4.5, "", emptyList())
+        val mockSearchResponse = RawgSearchResponseDto(
+            results = listOf(
+                RawgGameDto(
+                    id = 10,
+                    name = "Counter-Strike",
+                    metacritic = null,
+                    background_image = null,
+                    genres = listOf(RawgGenreDto("Shooter"), RawgGenreDto("Action"))
+                )
+            )
+        )
+        coEvery { rawgRemote.searchGamesByName("Counter-Strike") } returns Result.success(mockSearchResponse)
+
+        val enriched = broker.enrichBibliotecaGeneros(listOf(juego))
+
+        assertEquals(listOf("Shooter", "Action"), enriched.first().generos)
     }
 }
