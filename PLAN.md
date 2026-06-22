@@ -315,7 +315,7 @@ sealed class UiState<out T> {
 - ✅ No se puede volver a la plantalla de busqueda desde la biblioteca o el detalle
 - [ ] Los favoritos se guardan solamente "de nombre". Si reinicio la app y voy a favoritos, aparecen en la lista, pero al hacer click la app me pide que haga una busqueda para cargar el perfil. Deberiamos persistir al menos algunos detalles basicos del juego.
 - [ ] DetalleJuego: las descripciones de RAWG estan en ingles.
-- [ ] DetalleJuego: No mostramos imagenes (pero si su url).
+- ✅ DetalleJuego: No mostramos imagenes (pero si su url).
 - [ ] No hay generos en la pantalla de biblioteca, aunque los obtenemos de Steam.
 - ✅ En la biblioteca no se muestra la imagen del juego
 - ✅ En Favoritos no se muestra la imagen del juego

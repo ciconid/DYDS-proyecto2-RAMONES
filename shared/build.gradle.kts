@@ -33,6 +33,8 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
                 implementation("media.kamel:kamel-image:0.9.5")
+                implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+                implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
             }
         }
 

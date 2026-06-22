@@ -45,6 +45,9 @@ import org.example.dyds_proyecto2_ramones.domain.model.DetalleJuego
 import org.example.dyds_proyecto2_ramones.presentation.common.formatHoursOneDecimal
 import org.example.dyds_proyecto2_ramones.presentation.common.GameIcon
 import org.example.dyds_proyecto2_ramones.presentation.common.UiState
+import coil3.compose.AsyncImage
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 
 @Composable
 fun DetalleScreen(
@@ -282,12 +285,12 @@ private fun DetalleContent(
                         .border(1.dp, border, RoundedCornerShape(8.dp))
                         .padding(12.dp),
                 ) {
-                    Text(
-                        text = detalle.screenshots[page],
-                        color = textMuted,
-                        fontSize = 11.sp,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
+                    AsyncImage(
+                        model = detalle.screenshots[page],
+                        contentDescription = "Screenshot ${page + 1}",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxWidth()
                     )
                 }
             }
