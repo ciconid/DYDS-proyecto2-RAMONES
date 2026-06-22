@@ -36,6 +36,8 @@ class DetalleViewModel(
             return
         }
 
+        if (appId == lastAppId && detalleActual != null) return
+
         lastSteamId = steamId
         lastAppId = appId
         _uiState.value = UiState.Loading
