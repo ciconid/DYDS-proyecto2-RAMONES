@@ -45,6 +45,8 @@ class BibliotecaViewModel(
             return
         }
 
+        if (cleanSteamId == lastSteamId && juegosOriginales.isNotEmpty()) return
+
         lastSteamId = cleanSteamId
         _uiState.value = _uiState.value.copy(
             steamId = cleanSteamId,
