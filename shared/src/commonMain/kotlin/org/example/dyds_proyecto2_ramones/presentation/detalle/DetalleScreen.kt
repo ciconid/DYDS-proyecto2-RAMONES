@@ -42,6 +42,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.launch
 import org.example.dyds_proyecto2_ramones.domain.model.DetalleJuego
+import org.example.dyds_proyecto2_ramones.presentation.common.GameIcon
 import org.example.dyds_proyecto2_ramones.presentation.common.UiState
 
 @Composable
@@ -163,7 +164,12 @@ private fun DetalleContent(
                 .background(elevated, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center,
         ) {
-            Text("🎮")
+            GameIcon(
+                iconUrl = detalle.juego.iconUrl,
+                modifier = Modifier.fillMaxSize(),
+                backgroundColor = elevated,
+                fallbackTextColor = textMuted,
+            )
         }
 
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {

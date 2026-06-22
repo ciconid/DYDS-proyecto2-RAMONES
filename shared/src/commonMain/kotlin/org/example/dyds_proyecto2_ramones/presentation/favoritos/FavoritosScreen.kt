@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import org.example.dyds_proyecto2_ramones.presentation.common.GameIcon
 
 @Composable
 fun FavoritosScreen(
@@ -156,7 +157,12 @@ fun FavoritosScreen(
                                 .background(elevated, RoundedCornerShape(6.dp)),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("")
+                            GameIcon(
+                                iconUrl = juego.iconUrl,
+                                modifier = Modifier.fillMaxSize(),
+                                backgroundColor = elevated,
+                                fallbackTextColor = textMuted,
+                            )
                         }
 
                         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {

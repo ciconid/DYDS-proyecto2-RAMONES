@@ -318,7 +318,7 @@ sealed class UiState<out T> {
 - [ ] DetalleJuego: No mostramos imagenes.
 - [ ] No hay generos en la pantalla de biblioteca, aunque los obtenemos de Steam.
 - ✅ En la biblioteca no se muestra la imagen del juego
-- En Favoritos no se muestra la imagen del juego
+- ✅ En Favoritos no se muestra la imagen del juego
 - [ ] Las horas de juego se muestran con muchos decimales (ej: 123.456789 horas)
 
 ### Etapa 6 — Pulido y entrega `[Todos]`
