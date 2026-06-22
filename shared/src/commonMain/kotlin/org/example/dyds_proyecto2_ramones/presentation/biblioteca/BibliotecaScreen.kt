@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import org.example.dyds_proyecto2_ramones.presentation.common.GameIcon
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -210,7 +211,12 @@ fun BibliotecaScreen(
                                 .background(elevated, RoundedCornerShape(6.dp)),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("🎮")
+                            GameIcon(
+                                iconUrl = game.iconUrl,
+                                modifier = Modifier.fillMaxSize(),
+                                backgroundColor = elevated,
+                                fallbackTextColor = textMuted,
+                            )
                         }
 
                         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
