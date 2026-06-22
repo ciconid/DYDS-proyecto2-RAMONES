@@ -274,7 +274,7 @@ org.example.dyds_proyecto2_ramones/
 
 ---
 
-### Etapa 5 — Presentation: ViewModels y UI `[Persona C]`
+### ✅ Etapa 5 — Presentation: ViewModels y UI `[Persona C]`
 **Objetivo:** conectar toda la lógica al usuario con manejo correcto de estados, y testear los ViewModels.
 
 **UiState base (`presentation/common/`):**
@@ -292,25 +292,29 @@ sealed class UiState<out T> {
 - ✅ `[C]` Manejo visual de Loading, Error (con retry), Success
 - ✅ `[C]` `BusquedaViewModelTest` — happy path, SteamID vacío, error de red
 
-**BibliotecaScreen:**
+**✅BibliotecaScreen:**
 - ✅ `[C]` `BibliotecaViewModel` — carga lista, expone estado filtrado/ordenado; llama `GetBibliotecaUseCase`, `FiltrarPorGeneroUseCase`, `OrdenarPorHorasUseCase`
 - ✅ `[C]` `BibliotecaScreen` — LazyColumn con chips de género y botón de orden; cada item navega a Detalle; estado vacío
 - ✅ `[C]` `BibliotecaViewModelTest` — lista completa, filtro por género, ordenamiento por horas, lista vacía
 
-**DetalleScreen:**
+**✅DetalleScreen:**
 - ✅ `[C]` `DetalleViewModel` — llama `GetDetalleUseCase`; expone `DetalleJuego` + `esFavorito: StateFlow<Boolean>`
 - ✅ `[C]` `DetalleScreen` — nombre, horas, descripción, Metacritic score, screenshots (HorizontalPager), logros, botón toggle favorito
 - ✅ `[C]` Manejo de error si RAWG no encuentra el juego (mostrar solo datos de Steam)
 - ✅ `[C]` `DetalleViewModelTest` — detalle completo, fallback sin RAWG, toggle favorito
 
-**FavoritosScreen:**
-- [ ] `[C]` `FavoritosViewModel` — colecta `Flow` de `GetFavoritosUseCase`
-- [ ] `[C]` `FavoritosScreen` — LazyColumn con eliminar; estado vacío con mensaje; navega a Detalle
-- [ ] `[C]` `FavoritosViewModelTest` — lista con items, lista vacía, eliminar favorito
+**✅FavoritosScreen:**
+- ✅ `[C]` `FavoritosViewModel` — colecta `Flow` de `GetFavoritosUseCase`
+- ✅ `[C]` `FavoritosScreen` — LazyColumn con eliminar; estado vacío con mensaje; navega a Detalle
+- ✅ `[C]` `FavoritosViewModelTest` — lista con items, lista vacía, eliminar favorito
 
 **Criterio de éxito:** flujo completo navegable: buscar SteamID → ver biblioteca → abrir detalle → agregar favorito → verlo en Favoritos. `./gradlew test` pasa.
 
 ---
+### Bugs y cosas para corregir
+- [ ] No se puede volver a la plantalla de busqueda desde la biblioteca o el detalle
+- [ ] Los favoritos se guardan solamente "de nombre". Si reinicio la app y voy a favoritos, aparecen en la lista, pero al hacer click la app me pide que haga una busqueda para cargar el perfil. Deberiamos persistir al menos algunos detalles basicos del juego.
+
 
 ### Etapa 6 — Pulido y entrega `[Todos]`
 **Objetivo:** dejar la app robusta y el repositorio listo para la presentación.

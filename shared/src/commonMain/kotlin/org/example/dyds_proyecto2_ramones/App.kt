@@ -23,6 +23,7 @@ import org.example.dyds_proyecto2_ramones.presentation.common.Screen
 import org.example.dyds_proyecto2_ramones.presentation.detalle.DetalleScreen
 import org.example.dyds_proyecto2_ramones.presentation.detalle.DetalleViewModel
 import org.example.dyds_proyecto2_ramones.presentation.favoritos.FavoritosScreen
+import org.example.dyds_proyecto2_ramones.presentation.favoritos.FavoritosViewModel
 import org.example.dyds_proyecto2_ramones.domain.usecase.GetFavoritosUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.AgregarFavoritoUseCase
 import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
@@ -56,6 +57,9 @@ fun App() {
         }
         val detalleViewModel = remember(getDetalleUseCase, getFavoritosUseCase, agregarFavoritoUseCase, eliminarFavoritoUseCase) {
             DetalleViewModel(getDetalleUseCase, getFavoritosUseCase, agregarFavoritoUseCase, eliminarFavoritoUseCase)
+        }
+        val favoritosViewModel = remember(getFavoritosUseCase, eliminarFavoritoUseCase) {
+            FavoritosViewModel(getFavoritosUseCase, eliminarFavoritoUseCase)
         }
 
         Row(
@@ -103,8 +107,7 @@ fun App() {
                     is Screen.Favoritos -> FavoritosScreen(
                         onNavigateDetalle = { appId -> currentScreen = Screen.Detalle(appId) },
                         onNavigateBack = { currentScreen = Screen.Busqueda },
-                        getFavoritosUseCase = getFavoritosUseCase,
-                        eliminarFavoritoUseCase = eliminarFavoritoUseCase,
+                        viewModel = favoritosViewModel,
                     )
                 }
             }

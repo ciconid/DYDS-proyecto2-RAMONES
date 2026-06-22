@@ -16,8 +16,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -30,16 +32,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
-import org.example.dyds_proyecto2_ramones.domain.model.Juego
-import org.example.dyds_proyecto2_ramones.domain.usecase.GetFavoritosUseCase
-import org.example.dyds_proyecto2_ramones.domain.usecase.EliminarFavoritoUseCase
 
 @Composable
 fun FavoritosScreen(
     onNavigateDetalle: (String) -> Unit,
     onNavigateBack: () -> Unit,
-    getFavoritosUseCase: GetFavoritosUseCase,
-    eliminarFavoritoUseCase: EliminarFavoritoUseCase,
+    viewModel: FavoritosViewModel,
 ) {
     val bgBase = Color(0xFF0E1117)
     val bgSurface = Color(0xFF161B27)
@@ -48,8 +46,12 @@ fun FavoritosScreen(
     val textMuted = Color(0xFF7A8599)
     val border = Color(0xFF242D42)
 
-    val favoritos by getFavoritosUseCase().collectAsState(initial = emptyList())
+    val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        viewModel.observarFavoritos()
+    }
 
     Column(
         modifier = Modifier
@@ -70,7 +72,41 @@ fun FavoritosScreen(
             fontSize = 13.sp,
         )
 
-        if (favoritos.isEmpty()) {
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(color = textPrim)
+            }
+        } else if (!uiState.errorMessage.isNullOrBlank()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Text(
+                        text = uiState.errorMessage ?: "No se pudieron cargar los favoritos",
+                        color = textMuted,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center,
+                    )
+                    Button(
+                        onClick = { viewModel.limpiarError() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = textPrim,
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, border),
+                    ) {
+                        Text("Cerrar", fontSize = 12.sp)
+                    }
+                }
+            }
+        } else if (uiState.juegos.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
@@ -103,7 +139,7 @@ fun FavoritosScreen(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(favoritos) { juego ->
+                items(uiState.juegos) { juego ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -140,7 +176,7 @@ fun FavoritosScreen(
                         Button(
                             onClick = {
                                 scope.launch {
-                                    eliminarFavoritoUseCase.invoke(juego.appId)
+                                    viewModel.eliminarFavorito(juego.appId)
                                 }
                             },
                             colors = ButtonDefaults.buttonColors(
