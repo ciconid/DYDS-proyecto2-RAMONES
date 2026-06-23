@@ -49,6 +49,7 @@ kotlin {
                 implementation(libs.kotlin.testJunit)
                 implementation(libs.junit)
                 implementation(libs.mockk)
+                implementation("org.slf4j:slf4j-simple:1.7.36")
                 implementation("com.squareup.sqldelight:sqlite-driver:1.5.5")
                 implementation("io.ktor:ktor-client-mock:2.3.12")
             }
