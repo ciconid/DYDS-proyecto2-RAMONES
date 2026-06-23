@@ -40,12 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
 import org.example.dyds_proyecto2_ramones.domain.model.DetalleJuego
 import org.example.dyds_proyecto2_ramones.presentation.common.formatHoursOneDecimal
 import org.example.dyds_proyecto2_ramones.presentation.common.GameIcon
@@ -293,6 +290,7 @@ private fun DetalleContent(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .aspectRatio(16f / 9f)
                             .background(bgSurface, RoundedCornerShape(8.dp))
                             .border(1.dp, border, RoundedCornerShape(8.dp))
                             .padding(12.dp),
@@ -312,32 +310,36 @@ private fun DetalleContent(
                         modifier = Modifier
                             .align(Alignment.CenterStart)
                             .padding(start = 8.dp)
-                            .background(Color(0x22000000), RoundedCornerShape(20.dp))
+                            .background(Color(0x99000000), RoundedCornerShape(20.dp))
+                            .border(1.dp, border, RoundedCornerShape(20.dp))
                             .clickable {
                                 scope.launch {
                                     val prev = (pagerState.currentPage - 1 + detalle.screenshots.size) % detalle.screenshots.size
                                     pagerState.animateScrollToPage(prev)
                                 }
                             }
-                            .padding(6.dp),
+                            .padding(horizontal = 10.dp, vertical = 8.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text("‹", color = textPrim, fontSize = 20.sp)
+                        Text("‹", color = textPrim, textAlign = TextAlign.Center, fontSize = 25.sp, fontWeight = FontWeight.Bold,  modifier = Modifier.offset(y = (-3).dp))
                     }
 
                     Box(
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
                             .padding(end = 8.dp)
-                            .background(Color(0x22000000), RoundedCornerShape(20.dp))
+                            .background(Color(0x99000000), RoundedCornerShape(20.dp))
+                            .border(1.dp, border, RoundedCornerShape(20.dp))
                             .clickable {
                                 scope.launch {
                                     val next = (pagerState.currentPage + 1) % detalle.screenshots.size
                                     pagerState.animateScrollToPage(next)
                                 }
                             }
-                            .padding(6.dp),
+                            .padding(horizontal = 10.dp, vertical = 8.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text("›", color = textPrim, fontSize = 20.sp)
+                        Text("›", color = textPrim, textAlign = TextAlign.Center, fontSize = 25.sp, fontWeight = FontWeight.Bold,  modifier = Modifier.offset(y = (-3).dp))
                     }
                 }
             }
