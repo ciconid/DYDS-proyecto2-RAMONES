@@ -54,7 +54,6 @@ class DetalleViewModel(
             detalleActual = detalle
             actualizarFavorito(appId)
             _uiState.value = UiState.Success(detalle)
-            // Traduccion en el VM para no depender de que la UI recuerde dispararla.
             traducirDescripcionActual()
         }.onFailure { error ->
             detalleActual = null
