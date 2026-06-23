@@ -39,8 +39,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import org.example.dyds_proyecto2_ramones.domain.model.DetalleJuego
 import org.example.dyds_proyecto2_ramones.presentation.common.formatHoursOneDecimal
 import org.example.dyds_proyecto2_ramones.presentation.common.GameIcon
@@ -275,36 +280,76 @@ private fun DetalleContent(
             )
 
             val pagerState = rememberPagerState(pageCount = { detalle.screenshots.size })
-            HorizontalPager(
-                state = pagerState,
-                contentPadding = PaddingValues(horizontal = 4.dp),
-                pageSpacing = 8.dp,
-                modifier = Modifier.fillMaxWidth().heightIn(min = 84.dp),
-            ) { page ->
-                Box(
+            val scope = rememberCoroutineScope()
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                HorizontalPager(
+                    state = pagerState,
+                    contentPadding = PaddingValues(horizontal = 4.dp),
+                    pageSpacing = 8.dp,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(bgSurface, RoundedCornerShape(8.dp))
-                        .border(1.dp, border, RoundedCornerShape(8.dp))
-                        .padding(12.dp),
-                ) {
-                    AsyncImage(
-                        model = detalle.screenshots[page],
-                        contentDescription = "Screenshot ${page + 1}",
-                        contentScale = ContentScale.Fit,
+                        .fillMaxWidth(),
+                ) { page ->
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                    )
+                            .background(bgSurface, RoundedCornerShape(8.dp))
+                            .border(1.dp, border, RoundedCornerShape(8.dp))
+                            .padding(12.dp),
+                    ) {
+                        AsyncImage(
+                            model = detalle.screenshots[page],
+                            contentDescription = "Screenshot ${page + 1}",
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+                    }
+                }
+
+                if (detalle.screenshots.size > 1) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(start = 8.dp)
+                            .background(Color(0x22000000), RoundedCornerShape(20.dp))
+                            .clickable {
+                                scope.launch {
+                                    val prev = (pagerState.currentPage - 1 + detalle.screenshots.size) % detalle.screenshots.size
+                                    pagerState.animateScrollToPage(prev)
+                                }
+                            }
+                            .padding(6.dp),
+                    ) {
+                        Text("‹", color = textPrim, fontSize = 20.sp)
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(end = 8.dp)
+                            .background(Color(0x22000000), RoundedCornerShape(20.dp))
+                            .clickable {
+                                scope.launch {
+                                    val next = (pagerState.currentPage + 1) % detalle.screenshots.size
+                                    pagerState.animateScrollToPage(next)
+                                }
+                            }
+                            .padding(6.dp),
+                    ) {
+                        Text("›", color = textPrim, fontSize = 20.sp)
+                    }
                 }
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 repeat(detalle.screenshots.size) { index ->
+                    val selected = pagerState.currentPage == index
                     Box(
                         modifier = Modifier
-                            .size(if (pagerState.currentPage == index) 8.dp else 6.dp)
-                            .background(if (pagerState.currentPage == index) accent else border, RoundedCornerShape(50))
-                            .clickable { }
+                            .size(if (selected) 8.dp else 6.dp)
+                            .background(if (selected) accent else border, RoundedCornerShape(50))
+                            .clickable { scope.launch { pagerState.animateScrollToPage(index) } }
                     )
                 }
             }
@@ -436,4 +481,3 @@ private fun CheckIcon(tint: Color) {
         drawLine(tint, Offset(size.width * 0.4f, size.height * 0.85f), Offset(size.width * 0.9f, size.height * 0.15f), strokeWidth = 1.8f)
     }
 }
-
