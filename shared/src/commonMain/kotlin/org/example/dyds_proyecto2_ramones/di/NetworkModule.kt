@@ -49,7 +49,7 @@ val networkModule = module {
 
     single<TranslationRemoteDataSource> {
         TranslationRemoteDataSourceImpl(
-//            client = get<HttpClient>(),
+            client = get<HttpClient>(),
             ioDispatcher = get(named("io"))
         )
     }

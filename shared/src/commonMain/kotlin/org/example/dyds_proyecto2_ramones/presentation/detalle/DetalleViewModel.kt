@@ -83,7 +83,6 @@ class DetalleViewModel(
         val steamId = lastSteamId ?: return
         val appId = lastAppId ?: return
         cargarDetalle(steamId, appId)
-        //traducirDescripcionActual()
     }
 
     suspend fun traducirDescripcionActual() {
@@ -94,11 +93,7 @@ class DetalleViewModel(
 
         translateDescriptionUseCase(descripcion)
             .onSuccess { traducida -> _descripcionTraducida.value = traducida }
-            .onFailure { error ->
-                println("❌ Traducción falló: ${error.message}")  // ← agregá esto
-                _descripcionTraducida.value = null
-            }
-            //.onFailure { _descripcionTraducida.value = null }
+            .onFailure { _descripcionTraducida.value = null }
     }
 
     private suspend fun actualizarFavorito(appId: String) {

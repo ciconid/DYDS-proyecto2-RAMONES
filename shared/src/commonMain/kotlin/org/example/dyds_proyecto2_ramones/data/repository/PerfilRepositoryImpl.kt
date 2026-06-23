@@ -18,7 +18,7 @@ class PerfilRepositoryImpl(
                 val responseDto = steamRemote.fetchPerfil(steamId).getOrThrow()
                 val players = responseDto.response.players
                 if (players.isEmpty()) {
-                    throw IllegalStateException("No player found for steamId: $steamId")
+                    throw IllegalStateException("No se encontro ningun perfil para el steamId: $steamId")
                 }
                 players.first().toDomain()
             }
