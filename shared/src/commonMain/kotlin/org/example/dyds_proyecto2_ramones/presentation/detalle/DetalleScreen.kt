@@ -74,7 +74,6 @@ fun DetalleScreen(
 
     LaunchedEffect(steamId, appId) {
         viewModel.cargarDetalle(steamId, appId)
-        //viewModel.traducirDescripcionActual()
     }
 
     Column(
